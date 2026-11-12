@@ -46,6 +46,7 @@ import {
 } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
 import { useToast } from '@/hooks/use-toast'
+import logoPlanner from '@/assets/construtora-planner-engenharia-60ea4.png'
 
 export default function Engenheiros() {
   const { usuario } = useAuth()
@@ -352,8 +353,13 @@ export default function Engenheiros() {
           </div>
         </div>
 
-        {/* Resumo da Reunião (Visível na impressão e também em tela) */}
+        {/* Resumo da Reunião (Visível apenas na impressão) */}
         <div className="hidden print:block p-4 mb-4 bg-white border border-slate-300 rounded text-xs space-y-2">
+          <img
+            src={logoPlanner}
+            alt="Construtora Planner Engenharia"
+            className="print-logo h-12 w-auto mb-2"
+          />
           <p className="font-bold text-sm">
             PLANNER ENGENHARIA &bull; PAUTA DE DISTRIBUIÇÃO DAS 41 OBRAS
           </p>

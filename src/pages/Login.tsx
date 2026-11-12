@@ -20,8 +20,10 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
-import { Building2, Lock, Mail, ArrowRight, ShieldCheck, HardHat, AlertCircle } from 'lucide-react'
+import { Lock, Mail, ArrowRight, ShieldCheck, HardHat, AlertCircle } from 'lucide-react'
 import { useToast } from '@/hooks/use-toast'
+import logoPlanner from '@/assets/construtora-planner-engenharia-60ea4.png'
+import bannerPlanner from '@/assets/fundodiagramadaplanner-a5e8e.png'
 
 export default function Login() {
   const { login, recuperarSenha, estaAutenticado, carregando } = useAuth()
@@ -110,125 +112,156 @@ export default function Login() {
         description: 'Se o e-mail estiver cadastrado, um link de recuperação foi enviado.',
       })
       setModalRecuperarAberto(false)
+      setEmailRecuperacao('')
     } finally {
       setEnviandoRecuperacao(false)
     }
   }
 
   return (
-    <div className="min-h-screen flex flex-col justify-center items-center bg-gradient-to-br from-slate-900 via-slate-800 to-slate-950 p-4 relative overflow-hidden">
-      {/* Elementos visuais decorativos de engenharia */}
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,#1e293b15_1px,transparent_1px),linear-gradient(to_bottom,#1e293b15_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] pointer-events-none" />
+    <div className="min-h-screen flex flex-col md:flex-row bg-slate-950">
+      {/* Painel lateral com o banner institucional (desktop) + faixa superior (mobile) */}
+      <div className="relative md:w-[46%] lg:w-[48%] xl:w-[52%] shrink-0 md:min-h-screen overflow-hidden">
+        <img
+          src={bannerPlanner}
+          alt="Canteiro de obras Planner Engenharia"
+          className="absolute inset-0 w-full h-full object-cover object-center"
+        />
+        {/* Sobreposição azul/vermelha que mantém a identidade e a legibilidade */}
+        <div className="absolute inset-0 bg-gradient-to-tr from-[#c8102e]/55 via-[#0b2a5b]/45 to-[#2196d3]/20 mix-blend-multiply" />
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff10_1px,transparent_1px),linear-gradient(to_bottom,#ffffff10_1px,transparent_1px)] bg-[size:3rem_3rem] pointer-events-none" />
+        <div className="absolute inset-0 md:bg-gradient-to-r md:from-transparent md:to-slate-950/70" />
 
-      <div className="w-full max-w-md z-10">
-        <div className="text-center mb-6">
-          <div className="inline-flex items-center justify-center p-3 rounded-2xl bg-blue-600/20 border border-blue-500/30 text-blue-400 mb-3 shadow-lg shadow-blue-500/10">
-            <Building2 className="w-8 h-8 text-blue-400" />
+        <div className="relative h-full flex flex-col justify-between p-6 md:p-10 min-h-[9rem] md:min-h-screen">
+          <img
+            src={logoPlanner}
+            alt="Construtora Planner Engenharia"
+            className="h-12 md:h-16 w-auto self-start drop-shadow-lg bg-white/95 rounded-lg px-3 py-1.5"
+          />
+          <div className="hidden md:block max-w-md">
+            <h2 className="text-2xl lg:text-3xl font-bold text-white leading-tight drop-shadow-md">
+              Sistema Integrado de Distribuição e Gestão das 41 Obras
+            </h2>
+            <p className="text-sm lg:text-base text-blue-100/90 mt-3">
+              Acompanhe regiões R1–R4, avance na alocação técnica e mantenha a carga de trabalho
+              equilibrada entre os engenheiros.
+            </p>
           </div>
-          <h1 className="text-2xl font-bold tracking-tight text-white flex items-center justify-center gap-2">
-            PLANNER <span className="text-blue-400 font-semibold text-lg">ENGENHARIA</span>
-          </h1>
-          <p className="text-sm text-slate-400 mt-1">
-            Sistema Integrado de Distribuição e Gestão das 41 Obras
+        </div>
+      </div>
+
+      {/* Coluna do formulário */}
+      <div className="flex-1 flex flex-col items-center justify-center p-4 md:p-10 relative">
+        {/* Elementos visuais decorativos de engenharia */}
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#1e293b15_1px,transparent_1px),linear-gradient(to_bottom,#1e293b15_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] pointer-events-none" />
+
+        <div className="w-full max-w-md z-10">
+          {/* Logo acima do formulário em telas pequenas (no desktop ela já está no painel do banner) */}
+          <div className="flex md:hidden justify-center mb-5">
+            <img
+              src={logoPlanner}
+              alt="Construtora Planner Engenharia"
+              className="h-11 w-auto bg-white/95 rounded-lg px-3 py-1.5 shadow-lg"
+            />
+          </div>
+
+          <Card className="border-slate-700/60 bg-slate-900/80 backdrop-blur-md text-white shadow-2xl">
+            <CardHeader className="space-y-1 pb-4">
+              <CardTitle className="text-lg text-white">Acessar Plataforma</CardTitle>
+              <CardDescription className="text-slate-400 text-xs">
+                Entre com seu e-mail corporativo e credenciais de acesso
+              </CardDescription>
+            </CardHeader>
+
+            <form onSubmit={handleSubmit}>
+              <CardContent className="space-y-4">
+                {erroLogin && (
+                  <div className="p-3 text-xs bg-rose-500/15 border border-rose-500/30 text-rose-300 rounded-lg flex items-center gap-2">
+                    <AlertCircle className="w-4 h-4 shrink-0 text-rose-400" />
+                    <span>{erroLogin}</span>
+                  </div>
+                )}
+
+                <div className="space-y-2">
+                  <Label htmlFor="email" className="text-xs font-medium text-slate-300">
+                    E-mail
+                  </Label>
+                  <div className="relative">
+                    <Mail className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
+                    <Input
+                      id="email"
+                      type="email"
+                      placeholder="nome@construtoraplanner.com.br"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      required
+                      className="pl-9 bg-slate-800/80 border-slate-700 text-white placeholder:text-slate-500 focus-visible:ring-blue-500"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <Label htmlFor="senha" className="text-xs font-medium text-slate-300">
+                      Senha
+                    </Label>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setEmailRecuperacao(email)
+                        setModalRecuperarAberto(true)
+                      }}
+                      className="text-xs text-blue-400 hover:text-blue-300 underline underline-offset-4"
+                    >
+                      Esqueceu a senha?
+                    </button>
+                  </div>
+                  <div className="relative">
+                    <Lock className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
+                    <Input
+                      id="senha"
+                      type="password"
+                      placeholder="••••••••"
+                      value={senha}
+                      onChange={(e) => setSenha(e.target.value)}
+                      required
+                      className="pl-9 bg-slate-800/80 border-slate-700 text-white placeholder:text-slate-500 focus-visible:ring-blue-500"
+                    />
+                  </div>
+                </div>
+
+                <div className="bg-slate-800/50 rounded-lg p-2.5 border border-slate-700/50 flex items-center gap-2 text-xs text-slate-400">
+                  <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0" />
+                  <span>
+                    Acesso oficial padrão: <strong>marlon_martins@construtoraplanner.com.br</strong>
+                  </span>
+                </div>
+              </CardContent>
+
+              <CardFooter className="pt-2">
+                <Button
+                  type="submit"
+                  className="w-full bg-blue-600 hover:bg-blue-500 text-white font-medium py-2 transition-all flex items-center justify-center gap-2 shadow-lg shadow-blue-600/20"
+                  disabled={submetendo}
+                >
+                  {submetendo ? (
+                    <>Autenticando...</>
+                  ) : (
+                    <>
+                      Entrar no Sistema
+                      <ArrowRight className="w-4 h-4" />
+                    </>
+                  )}
+                </Button>
+              </CardFooter>
+            </form>
+          </Card>
+
+          <p className="text-center text-xs text-slate-500 mt-6">
+            Construtora Planner Engenharia &copy; {new Date().getFullYear()} &bull; Gestão de Obras
+            R1–R4
           </p>
         </div>
-
-        <Card className="border-slate-700/60 bg-slate-900/80 backdrop-blur-md text-white shadow-2xl">
-          <CardHeader className="space-y-1 pb-4">
-            <CardTitle className="text-lg text-white">Acessar Plataforma</CardTitle>
-            <CardDescription className="text-slate-400 text-xs">
-              Entre com seu e-mail corporativo e credenciais de acesso
-            </CardDescription>
-          </CardHeader>
-
-          <form onSubmit={handleSubmit}>
-            <CardContent className="space-y-4">
-              {erroLogin && (
-                <div className="p-3 text-xs bg-rose-500/15 border border-rose-500/30 text-rose-300 rounded-lg flex items-center gap-2">
-                  <AlertCircle className="w-4 h-4 shrink-0 text-rose-400" />
-                  <span>{erroLogin}</span>
-                </div>
-              )}
-
-              <div className="space-y-2">
-                <Label htmlFor="email" className="text-xs font-medium text-slate-300">
-                  E-mail
-                </Label>
-                <div className="relative">
-                  <Mail className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
-                  <Input
-                    id="email"
-                    type="email"
-                    placeholder="nome@construtoraplanner.com.br"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                    className="pl-9 bg-slate-800/80 border-slate-700 text-white placeholder:text-slate-500 focus-visible:ring-blue-500"
-                  />
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <Label htmlFor="senha" className="text-xs font-medium text-slate-300">
-                    Senha
-                  </Label>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setEmailRecuperacao(email)
-                      setModalRecuperarAberto(true)
-                    }}
-                    className="text-xs text-blue-400 hover:text-blue-300 underline underline-offset-4"
-                  >
-                    Esqueceu a senha?
-                  </button>
-                </div>
-                <div className="relative">
-                  <Lock className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
-                  <Input
-                    id="senha"
-                    type="password"
-                    placeholder="••••••••"
-                    value={senha}
-                    onChange={(e) => setSenha(e.target.value)}
-                    required
-                    className="pl-9 bg-slate-800/80 border-slate-700 text-white placeholder:text-slate-500 focus-visible:ring-blue-500"
-                  />
-                </div>
-              </div>
-
-              <div className="bg-slate-800/50 rounded-lg p-2.5 border border-slate-700/50 flex items-center gap-2 text-xs text-slate-400">
-                <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0" />
-                <span>
-                  Acesso oficial padrão: <strong>marlon_martins@construtoraplanner.com.br</strong>
-                </span>
-              </div>
-            </CardContent>
-
-            <CardFooter className="pt-2">
-              <Button
-                type="submit"
-                className="w-full bg-blue-600 hover:bg-blue-500 text-white font-medium py-2 transition-all flex items-center justify-center gap-2 shadow-lg shadow-blue-600/20"
-                disabled={submetendo}
-              >
-                {submetendo ? (
-                  <>Autenticando...</>
-                ) : (
-                  <>
-                    Entrar no Sistema
-                    <ArrowRight className="w-4 h-4" />
-                  </>
-                )}
-              </Button>
-            </CardFooter>
-          </form>
-        </Card>
-
-        <p className="text-center text-xs text-slate-500 mt-6">
-          Construtora Planner Engenharia &copy; {new Date().getFullYear()} &bull; Gestão de Obras
-          R1–R4
-        </p>
       </div>
 
       {/* Modal de Recuperação de Senha */}

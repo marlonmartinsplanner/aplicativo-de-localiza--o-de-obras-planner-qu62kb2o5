@@ -13,6 +13,7 @@ import {
 } from 'lucide-react'
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
+import logoPlanner from '@/assets/construtora-planner-engenharia-60ea4.png'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -57,24 +58,18 @@ export function Navbar({ totalObras = 41, atribuidasCount }: NavbarProps) {
     <header className="sticky top-0 z-40 w-full border-b border-slate-200 dark:border-slate-800 bg-white/95 dark:bg-slate-900/95 backdrop-blur supports-[backdrop-filter]:bg-white/80 dark:supports-[backdrop-filter]:bg-slate-900/80 shadow-xs">
       <div className="flex h-16 items-center px-4 md:px-6 justify-between max-w-7xl mx-auto">
         {/* Logo / Marca */}
-        <div className="flex items-center gap-6">
-          <Link to="/mapa" className="flex items-center gap-2.5 font-bold tracking-tight">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-600 text-white shadow-md shadow-blue-500/20">
-              <Building2 className="h-5 w-5" />
-            </div>
-            <div className="flex flex-col">
-              <div className="flex items-center gap-1.5 leading-none">
-                <span className="text-base font-extrabold text-slate-900 dark:text-white">
-                  PLANNER
-                </span>
-                <span className="text-xs px-1.5 py-0.5 rounded font-semibold bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300">
-                  ENGENHARIA
-                </span>
-              </div>
-              <span className="text-[11px] text-slate-500 dark:text-slate-400 font-normal mt-0.5">
-                Distribuição das 41 Obras
-              </span>
-            </div>
+        <div className="flex items-center gap-4 lg:gap-6">
+          <Link
+            to="/mapa"
+            className="flex items-center font-bold tracking-tight shrink-0"
+            title="Construtora Planner Engenharia"
+          >
+            <img
+              src={logoPlanner}
+              alt="Construtora Planner Engenharia"
+              className="h-10 md:h-11 w-auto max-w-[190px] md:max-w-none object-contain object-left"
+            />
+            <span className="sr-only">Construtora Planner Engenharia</span>
           </Link>
 
           {/* Links desktop */}
