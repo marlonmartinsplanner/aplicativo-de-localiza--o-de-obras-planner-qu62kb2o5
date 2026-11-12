@@ -129,7 +129,7 @@ export default function Painel() {
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-200 dark:border-slate-800 pb-4">
           <div>
             <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white flex items-center gap-2.5">
-              <BarChart3 className="w-6 h-6 text-blue-600" />
+              <BarChart3 className="w-6 h-6 text-planner-blue" />
               Painel de Indicadores Estratégicos
             </h1>
             <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
@@ -148,7 +148,7 @@ export default function Painel() {
             <Link to="/obras">
               <Button
                 size="sm"
-                className="bg-blue-600 hover:bg-blue-500 text-white gap-1.5 text-xs"
+                className="bg-planner-blue hover:bg-planner-blue-dark text-white gap-1.5 text-xs"
               >
                 Tabela de Obras
                 <ArrowUpRight className="w-3.5 h-3.5" />
@@ -163,7 +163,7 @@ export default function Painel() {
           <Card className="border-slate-200 dark:border-slate-800 shadow-xs">
             <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
               <CardTitle className="text-xs font-medium text-slate-500">Total de Obras</CardTitle>
-              <div className="p-2 rounded-lg bg-blue-50 dark:bg-blue-950 text-blue-600">
+              <div className="p-2 rounded-lg bg-planner-blue/10 dark:bg-planner-blue/20 text-planner-blue">
                 <Building2 className="w-4 h-4" />
               </div>
             </CardHeader>
@@ -173,7 +173,7 @@ export default function Painel() {
               </div>
               <p className="text-[11px] text-slate-500 mt-1 flex items-center gap-1">
                 <span>{metricas.atribuicaoTotal} atribuídas</span>
-                <span className="text-blue-600 font-semibold">
+                <span className="text-planner-blue font-semibold">
                   ({Math.round((metricas.atribuicaoTotal / (metricas.total || 1)) * 100)}%)
                 </span>
               </p>
@@ -243,7 +243,7 @@ export default function Painel() {
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-semibold flex items-center justify-between">
                 <span className="flex items-center gap-2">
-                  <BarChart3 className="w-4 h-4 text-blue-600" />
+                  <BarChart3 className="w-4 h-4 text-planner-blue" />
                   Obras e Carga por Região (R1–R4)
                 </span>
                 <span className="text-xs font-normal text-muted-foreground">
@@ -275,7 +275,7 @@ export default function Painel() {
                           const data = payload[0].payload
                           return (
                             <div className="bg-slate-900 text-white p-2.5 rounded-lg shadow-xl text-xs space-y-1">
-                              <p className="font-bold text-blue-400">
+                              <p className="font-bold text-sky-300">
                                 {data.regiao} — {data.nome}
                               </p>
                               <p>Total de Obras: {data.total}</p>
@@ -292,7 +292,7 @@ export default function Painel() {
                     <Bar
                       dataKey="atribuidas"
                       name="Atribuídas"
-                      fill="#2563eb"
+                      fill="#2196d3"
                       radius={[4, 4, 0, 0]}
                     />
                     <Bar
@@ -399,10 +399,10 @@ export default function Painel() {
         </div>
 
         {/* Resumo Rápido para a Diretoria / Reunião */}
-        <Card className="border-blue-200 dark:border-blue-900 bg-blue-50/40 dark:bg-blue-950/20">
+        <Card className="border-planner-blue/30 dark:border-planner-blue/40 bg-planner-blue/5 dark:bg-planner-blue/10">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-semibold text-blue-900 dark:text-blue-200 flex items-center gap-2">
-              <HardHat className="w-4 h-4 text-blue-600" />
+            <CardTitle className="text-sm font-semibold text-planner-blue-dark dark:text-planner-blue-light flex items-center gap-2">
+              <HardHat className="w-4 h-4 text-planner-blue" />
               Quadro Resumo de Distribuição de Engenharia
             </CardTitle>
           </CardHeader>
@@ -419,7 +419,7 @@ export default function Painel() {
                 <Button
                   size="sm"
                   variant="outline"
-                  className="h-8 text-xs bg-white dark:bg-slate-900 border-blue-300 dark:border-blue-800"
+                  className="h-8 text-xs bg-white dark:bg-slate-900 border-planner-blue/40 dark:border-planner-blue/50"
                 >
                   Gerenciar Equipe e Carga de Obras
                 </Button>

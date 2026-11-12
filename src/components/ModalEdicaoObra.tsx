@@ -125,7 +125,7 @@ export function ModalEdicaoObra({
       <DialogContent className="max-w-xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <div className="flex items-center gap-2">
-            <div className="p-2 rounded-lg bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400">
+            <div className="p-2 rounded-lg bg-planner-blue/15 dark:bg-planner-blue/25 text-planner-blue-dark dark:text-planner-blue-light">
               <Building2 className="w-5 h-5" />
             </div>
             <div>
@@ -223,8 +223,9 @@ export function ModalEdicaoObra({
           <div className="p-3.5 rounded-lg border bg-slate-50 dark:bg-slate-900/50 space-y-2">
             <div className="flex items-center justify-between">
               <Label className="text-xs font-semibold flex items-center gap-1">
-                <Percent className="w-3.5 h-3.5 text-blue-600" />
-                Avanço Físico: <span className="font-bold text-blue-600 text-sm">{avanco}%</span>
+                <Percent className="w-3.5 h-3.5 text-planner-blue" />
+                Avanço Físico:{' '}
+                <span className="font-bold text-planner-blue-dark text-sm">{avanco}%</span>
               </Label>
               <span className="text-[11px] text-muted-foreground">
                 {avanco === 100 ? 'Obra Completa' : avanco > 0 ? 'Em execução' : 'Não iniciada'}
@@ -240,8 +241,8 @@ export function ModalEdicaoObra({
           </div>
 
           {/* Atribuição de Engenheiro */}
-          <div className="p-3.5 rounded-lg border border-blue-200 dark:border-blue-900/60 bg-blue-50/50 dark:bg-blue-950/20 space-y-2.5">
-            <div className="flex items-center gap-1.5 text-blue-700 dark:text-blue-300 font-semibold text-xs">
+          <div className="p-3.5 rounded-lg border border-planner-blue-200 dark:border-planner-blue/40 bg-planner-blue-50/50 dark:bg-planner-blue/10 space-y-2.5">
+            <div className="flex items-center gap-1.5 text-planner-blue-dark dark:text-planner-blue-light font-semibold text-xs">
               <UserCheck className="w-4 h-4" />
               Engenheiro Responsável Único
             </div>
@@ -283,7 +284,7 @@ export function ModalEdicaoObra({
           <Button
             onClick={handleSalvar}
             disabled={salvando}
-            className="bg-blue-600 hover:bg-blue-500 text-white"
+            className="bg-planner-blue hover:bg-planner-blue-dark text-white"
           >
             {salvando ? 'Salvando...' : 'Salvar Alterações'}
           </Button>

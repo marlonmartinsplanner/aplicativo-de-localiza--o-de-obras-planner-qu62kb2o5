@@ -306,7 +306,7 @@ export default function Engenheiros() {
           <div>
             <div className="flex items-center gap-2">
               <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white flex items-center gap-2.5">
-                <Users className="w-6 h-6 text-blue-600 print:hidden" />
+                <Users className="w-6 h-6 text-planner-blue print:hidden" />
                 Painel de Engenheiros e Carga de Trabalho
               </h1>
             </div>
@@ -336,7 +336,7 @@ export default function Engenheiros() {
               onClick={() => setAlertaZerarAberto(true)}
               variant="outline"
               size="sm"
-              className="text-xs text-rose-600 hover:text-rose-700 hover:bg-rose-50 dark:hover:bg-rose-950/40 border-rose-200 dark:border-rose-900 gap-1.5"
+              className="text-xs text-planner-red hover:text-planner-red-dark hover:bg-planner-red/10 dark:hover:bg-planner-red/20 border-planner-red/30 dark:border-planner-red/40 gap-1.5"
             >
               <RotateCcw className="w-3.5 h-3.5" />
               Zerar Atribuições
@@ -345,7 +345,7 @@ export default function Engenheiros() {
             <Button
               onClick={() => setModalNovoEngAberto(true)}
               size="sm"
-              className="bg-blue-600 hover:bg-blue-500 text-white text-xs gap-1.5 shadow-xs"
+              className="bg-planner-blue hover:bg-planner-blue-dark text-white text-xs gap-1.5 shadow-xs"
             >
               <UserPlus className="w-3.5 h-3.5" />
               Novo Engenheiro
@@ -379,7 +379,7 @@ export default function Engenheiros() {
               <CardHeader className="pb-3 border-b border-slate-100 dark:border-slate-800/80">
                 <div className="flex items-start justify-between gap-2">
                   <div className="flex items-center gap-2.5">
-                    <div className="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-950 flex items-center justify-center text-blue-700 dark:text-blue-300 font-bold text-sm">
+                    <div className="w-10 h-10 rounded-full bg-planner-blue/10 dark:bg-planner-blue/20 flex items-center justify-center text-planner-blue-dark dark:text-planner-blue-light font-bold text-sm">
                       {eng.nome
                         .replace('Eng. ', '')
                         .replace('Engª. ', '')
@@ -401,7 +401,7 @@ export default function Engenheiros() {
                     variant="ghost"
                     size="icon"
                     onClick={() => setEngParaRemover(eng)}
-                    className="h-8 w-8 text-slate-400 hover:text-rose-600 print:hidden"
+                    className="h-8 w-8 text-slate-400 hover:text-planner-red print:hidden"
                     title="Remover engenheiro"
                   >
                     <Trash2 className="w-3.5 h-3.5" />
@@ -412,11 +412,11 @@ export default function Engenheiros() {
               <CardContent className="pt-4 space-y-3.5 flex-1">
                 {/* Métricas Principais deste Engenheiro */}
                 <div className="grid grid-cols-2 gap-2 text-center">
-                  <div className="p-2.5 rounded-lg bg-blue-50/60 dark:bg-blue-950/30 border border-blue-100 dark:border-blue-900/40">
+                  <div className="p-2.5 rounded-lg bg-planner-blue/5 dark:bg-planner-blue/15 border border-planner-blue-200 dark:border-planner-blue/30">
                     <span className="text-[10px] text-slate-500 font-medium uppercase">
                       Carga de Obras
                     </span>
-                    <p className="text-xl font-bold text-blue-600 dark:text-blue-400 mt-0.5">
+                    <p className="text-xl font-bold text-planner-blue-dark dark:text-planner-blue-light mt-0.5">
                       {eng.qtdObras}{' '}
                       <span className="text-xs font-normal text-slate-400">obras</span>
                     </p>
@@ -445,7 +445,7 @@ export default function Engenheiros() {
                   </div>
                   <div className="w-full bg-slate-100 dark:bg-slate-800 h-1.5 rounded-full overflow-hidden">
                     <div
-                      className="bg-blue-600 h-full rounded-full"
+                      className="bg-planner-blue h-full rounded-full"
                       style={{ width: `${eng.avancoMedio}%` }}
                     />
                   </div>
@@ -552,7 +552,7 @@ export default function Engenheiros() {
         <Card className="border-slate-200 dark:border-slate-800 print:hidden">
           <CardHeader className="pb-3">
             <CardTitle className="text-sm font-semibold flex items-center gap-2">
-              <History className="w-4 h-4 text-blue-600" />
+              <History className="w-4 h-4 text-planner-blue" />
               Auditoria e Histórico de Atribuições
             </CardTitle>
             <CardDescription className="text-xs">
@@ -568,13 +568,13 @@ export default function Engenheiros() {
                   className="p-2 rounded-lg bg-slate-50 dark:bg-slate-900/60 border border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs"
                 >
                   <div className="flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full bg-blue-500" />
+                    <span className="w-2 h-2 rounded-full bg-planner-blue" />
                     <div>
                       <span className="font-semibold text-slate-800 dark:text-slate-200">
                         {h.obra_nome || 'Obra'}
                       </span>
                       <span className="text-slate-400 mx-1.5">&bull;</span>
-                      <span className="text-blue-600 dark:text-blue-400 font-medium">{h.acao}</span>
+                      <span className="text-planner-blue-dark dark:text-planner-blue-light font-medium">{h.acao}</span>
                     </div>
                   </div>
                   <div className="text-[11px] text-slate-400 shrink-0">
@@ -603,7 +603,7 @@ export default function Engenheiros() {
         <DialogContent className="max-w-md">
           <DialogHeader>
             <DialogTitle className="text-base flex items-center gap-2">
-              <UserPlus className="w-4 h-4 text-blue-600" />
+              <UserPlus className="w-4 h-4 text-planner-blue" />
               Cadastrar Novo Engenheiro
             </DialogTitle>
             <DialogDescription className="text-xs">
@@ -661,7 +661,7 @@ export default function Engenheiros() {
             <Button
               onClick={handleCadastrarEngenheiro}
               disabled={salvandoEng}
-              className="bg-blue-600 hover:bg-blue-500 text-white"
+              className="bg-planner-blue hover:bg-planner-blue-dark text-white"
             >
               {salvandoEng ? 'Salvando...' : 'Cadastrar Engenheiro'}
             </Button>
@@ -673,8 +673,8 @@ export default function Engenheiros() {
       <AlertDialog open={alertaZerarAberto} onOpenChange={setAlertaZerarAberto}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle className="flex items-center gap-2 text-rose-600">
-              <AlertTriangle className="w-5 h-5 text-rose-600" />
+            <AlertDialogTitle className="flex items-center gap-2 text-planner-red">
+              <AlertTriangle className="w-5 h-5 text-planner-red" />
               Zerar Todas as Atribuições de Obras?
             </AlertDialogTitle>
             <AlertDialogDescription className="text-xs text-slate-600 dark:text-slate-400">
@@ -688,7 +688,7 @@ export default function Engenheiros() {
             <AlertDialogAction
               onClick={handleZerarAtribuicoes}
               disabled={processandoAcao}
-              className="bg-rose-600 hover:bg-rose-500 text-white"
+              className="bg-planner-red hover:bg-planner-red-dark text-white"
             >
               {processandoAcao ? 'Zerando...' : 'Confirmar e Zerar'}
             </AlertDialogAction>
@@ -703,7 +703,7 @@ export default function Engenheiros() {
       >
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle className="flex items-center gap-2 text-rose-600">
+            <AlertDialogTitle className="flex items-center gap-2 text-planner-red">
               <Trash2 className="w-5 h-5" />
               Remover {engParaRemover?.nome}?
             </AlertDialogTitle>
@@ -717,7 +717,7 @@ export default function Engenheiros() {
             <AlertDialogAction
               onClick={handleRemoverEngenheiro}
               disabled={processandoAcao}
-              className="bg-rose-600 hover:bg-rose-500 text-white"
+              className="bg-planner-red hover:bg-planner-red-dark text-white"
             >
               {processandoAcao ? 'Removendo...' : 'Remover'}
             </AlertDialogAction>

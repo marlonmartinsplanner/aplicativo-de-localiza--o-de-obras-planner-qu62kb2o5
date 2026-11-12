@@ -238,7 +238,7 @@ export default function Obras() {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 dark:border-slate-800 pb-4">
           <div>
             <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white flex items-center gap-2.5">
-              <Building2 className="w-6 h-6 text-blue-600" />
+              <Building2 className="w-6 h-6 text-planner-blue" />
               Tabela das 41 Obras
             </h1>
             <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
@@ -348,9 +348,9 @@ export default function Obras() {
                       Código
                       {campoOrdenacao === 'codigo' ? (
                         direcaoOrdenacao === 'asc' ? (
-                          <ArrowUp className="w-3 h-3 text-blue-600" />
+                          <ArrowUp className="w-3 h-3 text-planner-blue" />
                         ) : (
-                          <ArrowDown className="w-3 h-3 text-blue-600" />
+                          <ArrowDown className="w-3 h-3 text-planner-blue" />
                         )
                       ) : (
                         <ArrowUpDown className="w-3 h-3 text-slate-400" />
@@ -363,9 +363,9 @@ export default function Obras() {
                       Nome da Obra
                       {campoOrdenacao === 'nome' ? (
                         direcaoOrdenacao === 'asc' ? (
-                          <ArrowUp className="w-3 h-3 text-blue-600" />
+                          <ArrowUp className="w-3 h-3 text-planner-blue" />
                         ) : (
-                          <ArrowDown className="w-3 h-3 text-blue-600" />
+                          <ArrowDown className="w-3 h-3 text-planner-blue" />
                         )
                       ) : (
                         <ArrowUpDown className="w-3 h-3 text-slate-400" />
@@ -381,9 +381,9 @@ export default function Obras() {
                       Município
                       {campoOrdenacao === 'municipio' ? (
                         direcaoOrdenacao === 'asc' ? (
-                          <ArrowUp className="w-3 h-3 text-blue-600" />
+                          <ArrowUp className="w-3 h-3 text-planner-blue" />
                         ) : (
-                          <ArrowDown className="w-3 h-3 text-blue-600" />
+                          <ArrowDown className="w-3 h-3 text-planner-blue" />
                         )
                       ) : (
                         <ArrowUpDown className="w-3 h-3 text-slate-400" />
@@ -399,9 +399,9 @@ export default function Obras() {
                       Região
                       {campoOrdenacao === 'regiao' ? (
                         direcaoOrdenacao === 'asc' ? (
-                          <ArrowUp className="w-3 h-3 text-blue-600" />
+                          <ArrowUp className="w-3 h-3 text-planner-blue" />
                         ) : (
-                          <ArrowDown className="w-3 h-3 text-blue-600" />
+                          <ArrowDown className="w-3 h-3 text-planner-blue" />
                         )
                       ) : (
                         <ArrowUpDown className="w-3 h-3 text-slate-400" />
@@ -417,9 +417,9 @@ export default function Obras() {
                       Situação
                       {campoOrdenacao === 'situacao' ? (
                         direcaoOrdenacao === 'asc' ? (
-                          <ArrowUp className="w-3 h-3 text-blue-600" />
+                          <ArrowUp className="w-3 h-3 text-planner-blue" />
                         ) : (
-                          <ArrowDown className="w-3 h-3 text-blue-600" />
+                          <ArrowDown className="w-3 h-3 text-planner-blue" />
                         )
                       ) : (
                         <ArrowUpDown className="w-3 h-3 text-slate-400" />
@@ -432,9 +432,9 @@ export default function Obras() {
                       Avanço
                       {campoOrdenacao === 'avanco' ? (
                         direcaoOrdenacao === 'asc' ? (
-                          <ArrowUp className="w-3 h-3 text-blue-600" />
+                          <ArrowUp className="w-3 h-3 text-planner-blue" />
                         ) : (
-                          <ArrowDown className="w-3 h-3 text-blue-600" />
+                          <ArrowDown className="w-3 h-3 text-planner-blue" />
                         )
                       ) : (
                         <ArrowUpDown className="w-3 h-3 text-slate-400" />
@@ -450,9 +450,9 @@ export default function Obras() {
                       Custo Orçado
                       {campoOrdenacao === 'custo' ? (
                         direcaoOrdenacao === 'asc' ? (
-                          <ArrowUp className="w-3 h-3 text-blue-600" />
+                          <ArrowUp className="w-3 h-3 text-planner-blue" />
                         ) : (
-                          <ArrowDown className="w-3 h-3 text-blue-600" />
+                          <ArrowDown className="w-3 h-3 text-planner-blue" />
                         )
                       ) : (
                         <ArrowUpDown className="w-3 h-3 text-slate-400" />
@@ -461,16 +461,15 @@ export default function Obras() {
                   </TableHead>
 
                   <TableHead
-                    className="cursor-pointer"
-                    onClick={() => alternarOrdenacao('engenheiro')}
-                  >
-                    <div className="flex items-center gap-1">
+                    className="cursor-pointer text-right"
+                    onClick={() => alternarOrdenacao('custo')}
+                  >                    <div className="flex items-center gap-1">
                       Engenheiro Responsável
                       {campoOrdenacao === 'engenheiro' ? (
                         direcaoOrdenacao === 'asc' ? (
-                          <ArrowUp className="w-3 h-3 text-blue-600" />
+                          <ArrowUp className="w-3 h-3 text-planner-blue" />
                         ) : (
-                          <ArrowDown className="w-3 h-3 text-blue-600" />
+                          <ArrowDown className="w-3 h-3 text-planner-blue" />
                         )
                       ) : (
                         <ArrowUpDown className="w-3 h-3 text-slate-400" />
@@ -560,7 +559,7 @@ export default function Obras() {
                         {engResponsavel ? (
                           <div className="flex flex-col">
                             <span className="font-semibold text-slate-800 dark:text-slate-200 flex items-center gap-1">
-                              <HardHat className="w-3.5 h-3.5 text-blue-600 shrink-0" />
+                              <HardHat className="w-3.5 h-3.5 text-planner-blue shrink-0" />
                               {engResponsavel.nome}
                             </span>
                             {obra.atribuido_em && (
@@ -581,7 +580,7 @@ export default function Obras() {
                         <Button
                           variant="ghost"
                           size="icon"
-                          className="h-8 w-8 text-slate-500 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/40"
+                          className="h-8 w-8 text-slate-500 hover:text-planner-blue hover:bg-planner-blue/10 dark:hover:bg-planner-blue/20"
                           onClick={() => {
                             setObraParaEditar(obra)
                             setModalEdicaoAberto(true)

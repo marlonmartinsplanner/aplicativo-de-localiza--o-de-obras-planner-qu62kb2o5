@@ -19,8 +19,9 @@
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
 
-    --primary: 222.2 84% 4.9%;
-    --primary-foreground: 210 40% 98%;
+    /* Azul da marca Planner (#2196d3) como cor primária da interface */
+    --primary: 201 73% 48%;
+    --primary-foreground: 0 0% 100%;
 
     --secondary: 210 40% 98%;
     --secondary-foreground: 222.2 84% 4.9%;
@@ -31,12 +32,13 @@
     --accent: 210 40% 98%;
     --accent-foreground: 222.2 84% 4.9%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    /* Vermelho da marca Planner (#c8102e) para ações destrutivas */
+    --destructive: 350 85% 42%;
+    --destructive-foreground: 0 0% 100%;
 
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --ring: 201 73% 48%;
 
     --radius: 0.5rem;
 
@@ -74,8 +76,9 @@
     --popover: 222.2 84% 4.9%;
     --popover-foreground: 210 40% 98%;
 
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 84% 4.9%;
+    /* Azul da marca Planner no modo escuro também */
+    --primary: 201 73% 48%;
+    --primary-foreground: 0 0% 100%;
 
     --secondary: 222.2 84% 4.9%;
     --secondary-foreground: 210 40% 98%;
@@ -86,12 +89,13 @@
     --accent: 222.2 84% 4.9%;
     --accent-foreground: 210 40% 98%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    /* Vermelho da marca Planner no modo escuro também */
+    --destructive: 350 85% 42%;
+    --destructive-foreground: 0 0% 100%;
 
     --border: 222.2 84% 4.9%;
     --input: 222.2 84% 4.9%;
-    --ring: 214.3 31.8% 91.4%;
+    --ring: 201 73% 48%;
     --sidebar-background: 222.2 84% 4.9%;
     --sidebar-foreground: 210 40% 98%;
     --sidebar-primary: 222.2 84% 4.9%;

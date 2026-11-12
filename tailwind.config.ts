@@ -31,6 +31,26 @@ export default {
         display: ['SF Pro Display', 'Inter var', 'system-ui', 'sans-serif'],
       },
       colors: {
+        /* Cores da marca Construtora Planner Engenharia (--planner-blue / --planner-red em main.css) */
+        planner: {
+          blue: {
+            DEFAULT: '#2196d3',
+            dark: '#1878ab',
+            light: '#4fb0e0',
+            50: '#e8f5fc',
+            100: '#cfe9f7',
+            200: '#a7d8f0',
+            600: '#1878ab',
+          },
+          red: {
+            DEFAULT: '#c8102e',
+            dark: '#a30d25',
+            light: '#dd1f3a',
+            50: '#fbeaec',
+            100: '#f6ccd3',
+            600: '#a30d25',
+          },
+        },
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
         ring: 'hsl(var(--ring))',

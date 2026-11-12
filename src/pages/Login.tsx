@@ -44,7 +44,7 @@ export default function Login() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-950">
         <div className="flex flex-col items-center gap-3">
-          <HardHat className="w-10 h-10 text-blue-600 animate-bounce" />
+          <HardHat className="w-10 h-10 text-planner-blue animate-bounce" />
           <p className="text-sm text-muted-foreground font-medium">Carregando sistema Planner...</p>
         </div>
       </div>
@@ -195,7 +195,7 @@ export default function Login() {
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       required
-                      className="pl-9 bg-slate-800/80 border-slate-700 text-white placeholder:text-slate-500 focus-visible:ring-blue-500"
+                      className="pl-9 bg-slate-800/80 border-slate-700 text-white placeholder:text-slate-500 focus-visible:ring-planner-blue"
                     />
                   </div>
                 </div>
@@ -211,7 +211,7 @@ export default function Login() {
                         setEmailRecuperacao(email)
                         setModalRecuperarAberto(true)
                       }}
-                      className="text-xs text-blue-400 hover:text-blue-300 underline underline-offset-4"
+                      className="text-xs text-planner-blue hover:text-planner-blue-light underline underline-offset-4"
                     >
                       Esqueceu a senha?
                     </button>
@@ -225,7 +225,7 @@ export default function Login() {
                       value={senha}
                       onChange={(e) => setSenha(e.target.value)}
                       required
-                      className="pl-9 bg-slate-800/80 border-slate-700 text-white placeholder:text-slate-500 focus-visible:ring-blue-500"
+                      className="pl-9 bg-slate-800/80 border-slate-700 text-white placeholder:text-slate-500 focus-visible:ring-planner-blue"
                     />
                   </div>
                 </div>
@@ -241,7 +241,7 @@ export default function Login() {
               <CardFooter className="pt-2">
                 <Button
                   type="submit"
-                  className="w-full bg-blue-600 hover:bg-blue-500 text-white font-medium py-2 transition-all flex items-center justify-center gap-2 shadow-lg shadow-blue-600/20"
+                  className="w-full bg-planner-blue hover:bg-planner-blue-dark text-white font-medium py-2 transition-all flex items-center justify-center gap-2 shadow-lg shadow-planner-blue/20"
                   disabled={submetendo}
                 >
                   {submetendo ? (
@@ -306,7 +306,7 @@ export default function Login() {
               <Button
                 type="submit"
                 disabled={enviandoRecuperacao}
-                className="bg-blue-600 hover:bg-blue-500 text-white"
+                className="bg-planner-blue hover:bg-planner-blue-dark text-white"
               >
                 {enviandoRecuperacao ? 'Enviando...' : 'Enviar Link'}
               </Button>

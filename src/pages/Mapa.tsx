@@ -475,7 +475,7 @@ export default function Mapa() {
                 variant="ghost"
                 size="sm"
                 onClick={limparFiltros}
-                className="h-9 text-xs text-rose-600 hover:text-rose-700 hover:bg-rose-50 dark:hover:bg-rose-950/40 gap-1 px-2.5"
+                className="h-9 text-xs text-planner-red hover:text-planner-red-dark hover:bg-planner-red/10 dark:hover:bg-planner-red/20 gap-1 px-2.5"
               >
                 <RotateCcw className="w-3.5 h-3.5" />
                 Limpar
@@ -491,7 +491,7 @@ export default function Mapa() {
                 onClick={() => setCamada('satelite')}
                 className={`flex items-center gap-1 px-2.5 py-1 text-xs font-medium rounded-md transition-colors ${
                   camada === 'satelite'
-                    ? 'bg-blue-600 text-white shadow-xs font-semibold'
+                    ? 'bg-planner-blue text-white shadow-xs font-semibold'
                     : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
                 }`}
               >
@@ -503,7 +503,7 @@ export default function Mapa() {
                 onClick={() => setCamada('ruas')}
                 className={`flex items-center gap-1 px-2.5 py-1 text-xs font-medium rounded-md transition-colors ${
                   camada === 'ruas'
-                    ? 'bg-blue-600 text-white shadow-xs font-semibold'
+                    ? 'bg-planner-blue text-white shadow-xs font-semibold'
                     : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
                 }`}
               >
@@ -580,7 +580,7 @@ export default function Mapa() {
             <div className="p-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between bg-slate-50/70 dark:bg-slate-800/40">
               <div>
                 <h2 className="font-bold text-sm text-slate-900 dark:text-white flex items-center gap-2">
-                  <Building2 className="w-4 h-4 text-blue-600" />
+                  <Building2 className="w-4 h-4 text-planner-blue" />
                   {clusterSelecionado
                     ? `Ponto Selecionado (${clusterSelecionado.obras.length} obra${clusterSelecionado.obras.length > 1 ? 's' : ''})`
                     : `Obras (${obrasFiltradas.length}/${obras.length})`}
@@ -648,7 +648,7 @@ export default function Mapa() {
                     }}
                     className={`p-3 rounded-xl border transition-all cursor-pointer ${
                       estaSelecionada
-                        ? 'border-blue-500 bg-blue-50/50 dark:bg-blue-950/30 shadow-md ring-1 ring-blue-500'
+                        ? 'border-planner-blue bg-planner-blue/10 dark:bg-planner-blue/20 shadow-md ring-1 ring-planner-blue'
                         : 'border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 hover:border-slate-300 dark:hover:border-slate-700'
                     }`}
                   >
@@ -713,7 +713,7 @@ export default function Mapa() {
                     <div className="mt-3 pt-2.5 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between gap-2 text-xs">
                       <div className="flex items-center gap-1.5 truncate">
                         <HardHat
-                          className={`w-3.5 h-3.5 shrink-0 ${engResponsavel ? 'text-blue-600' : 'text-slate-400'}`}
+                          className={`w-3.5 h-3.5 shrink-0 ${engResponsavel ? 'text-planner-blue' : 'text-slate-400'}`}
                         />
                         <span className="text-[11px] truncate">
                           {engResponsavel ? (
@@ -732,7 +732,7 @@ export default function Mapa() {
                         <Button
                           variant="ghost"
                           size="icon"
-                          className="h-7 w-7 text-slate-500 hover:text-blue-600"
+                          className="h-7 w-7 text-slate-500 hover:text-planner-blue"
                           onClick={(e) => {
                             e.stopPropagation()
                             setObraParaEditar(obra)

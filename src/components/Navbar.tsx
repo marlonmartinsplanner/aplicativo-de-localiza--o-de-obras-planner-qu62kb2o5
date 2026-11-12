@@ -83,12 +83,12 @@ export function Navbar({ totalObras = 41, atribuidasCount }: NavbarProps) {
                   to={item.path}
                   className={`flex items-center gap-2 px-3.5 py-2 text-sm font-medium rounded-lg transition-colors ${
                     ativo
-                      ? 'bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300 font-semibold'
+                      ? 'bg-planner-blue/10 text-planner-blue-dark dark:bg-planner-blue/20 dark:text-planner-blue-light font-semibold'
                       : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100 dark:text-slate-400 dark:hover:text-white dark:hover:bg-slate-800'
                   }`}
                 >
                   <Icon
-                    className={`w-4 h-4 ${ativo ? 'text-blue-600 dark:text-blue-400' : 'text-slate-400'}`}
+                    className={`w-4 h-4 ${ativo ? 'text-planner-blue dark:text-planner-blue-light' : 'text-slate-400'}`}
                   />
                   {item.label}
                 </Link>
@@ -115,8 +115,8 @@ export function Navbar({ totalObras = 41, atribuidasCount }: NavbarProps) {
                 variant="ghost"
                 className="relative flex items-center gap-2.5 h-10 px-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800"
               >
-                <Avatar className="h-8 w-8 border border-blue-200 dark:border-blue-900">
-                  <AvatarFallback className="bg-blue-600 text-white font-bold text-xs">
+                <Avatar className="h-8 w-8 border border-planner-blue-200 dark:border-planner-blue/40">
+                  <AvatarFallback className="bg-planner-blue text-white font-bold text-xs">
                     {getIniciais(usuario?.name)}
                   </AvatarFallback>
                 </Avatar>
@@ -155,7 +155,7 @@ export function Navbar({ totalObras = 41, atribuidasCount }: NavbarProps) {
               <DropdownMenuSeparator />
               <DropdownMenuItem
                 onClick={handleLogout}
-                className="text-xs text-rose-600 dark:text-rose-400 cursor-pointer"
+                className="text-xs text-planner-red dark:text-planner-red-light cursor-pointer"
               >
                 <LogOut className="w-4 h-4 mr-2" />
                 Sair da Conta
@@ -170,6 +170,7 @@ export function Navbar({ totalObras = 41, atribuidasCount }: NavbarProps) {
             className="md:hidden text-slate-600 dark:text-slate-300"
             onClick={() => setMenuAberto(!menuAberto)}
           >
+>>>>>>>
             {menuAberto ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </Button>
         </div>
@@ -188,7 +189,7 @@ export function Navbar({ totalObras = 41, atribuidasCount }: NavbarProps) {
                 onClick={() => setMenuAberto(false)}
                 className={`flex items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-lg ${
                   ativo
-                    ? 'bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300 font-semibold'
+                    ? 'bg-planner-blue/10 text-planner-blue-dark dark:bg-planner-blue/20 dark:text-planner-blue-light font-semibold'
                     : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'
                 }`}
               >
