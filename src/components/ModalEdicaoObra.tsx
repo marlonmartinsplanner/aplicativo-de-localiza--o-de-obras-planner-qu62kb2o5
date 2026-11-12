@@ -1,0 +1,294 @@
+import { useState, useEffect } from 'react'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import { Slider } from '@/components/ui/slider'
+import type { Obra, Engenheiro, Regiao, SituacaoObra } from '@/types'
+import { REGIOES_CONFIG, SITUACOES_CONFIG } from '@/types'
+import { atualizarObra, atribuirEngenheiro } from '@/services/obras'
+import { useAuth } from '@/contexts/AuthContext'
+import { useToast } from '@/hooks/use-toast'
+import { Building2, UserCheck, Calendar, DollarSign, Percent } from 'lucide-react'
+
+interface ModalEdicaoObraProps {
+  obra: Obra | null
+  aberto: boolean
+  engenheiros: Engenheiro[]
+  aoFechar: () => void
+  aoSalvar: (obraAtualizada: Obra) => void
+}
+
+export function ModalEdicaoObra({
+  obra,
+  aberto,
+  engenheiros,
+  aoFechar,
+  aoSalvar,
+}: ModalEdicaoObraProps) {
+  const { usuario } = useAuth()
+  const { toast } = useToast()
+
+  const [nome, setNome] = useState('')
+  const [municipio, setMunicipio] = useState('')
+  const [regiao, setRegiao] = useState<Regiao>('R1')
+  const [situacao, setSituacao] = useState<SituacaoObra>('Em andamento')
+  const [avanco, setAvanco] = useState(0)
+  const [custo, setCusto] = useState(0)
+  const [engenheiroId, setEngenheiroId] = useState<string>('nenhum')
+  const [salvando, setSalvando] = useState(false)
+
+  useEffect(() => {
+    if (obra) {
+      setNome(obra.nome || '')
+      setMunicipio(obra.municipio || '')
+      setRegiao(obra.regiao || 'R1')
+      setSituacao(obra.situacao || 'Em andamento')
+      setAvanco(obra.avanco || 0)
+      setCusto(obra.custo || 0)
+      setEngenheiroId(obra.engenheiro || 'nenhum')
+    }
+  }, [obra])
+
+  if (!obra) return null
+
+  const handleSalvar = async () => {
+    if (!nome.trim() || !municipio.trim()) {
+      toast({
+        variant: 'destructive',
+        title: 'Campos obrigatórios',
+        description: 'Nome da obra e município não podem ficar vazios.',
+      })
+      return
+    }
+
+    setSalvando(true)
+    try {
+      const engSelecionado = engenheiroId === 'nenhum' ? null : engenheiroId
+      const engMudou = engSelecionado !== (obra.engenheiro || null)
+
+      // Atualiza campos gerais da obra
+      let res = await atualizarObra(obra.id, {
+        nome: nome.trim(),
+        municipio: municipio.trim(),
+        regiao,
+        situacao,
+        avanco,
+        custo,
+      })
+
+      // Se o engenheiro foi alterado, usa atribuirEngenheiro que grava histórico e carimbo
+      if (engMudou) {
+        res = await atribuirEngenheiro(
+          obra.id,
+          engSelecionado,
+          usuario?.name || 'Marlon Martins',
+          usuario?.id,
+        )
+      }
+
+      toast({
+        title: 'Obra atualizada',
+        description: `Os dados da obra "${res.nome}" foram salvos com sucesso.`,
+      })
+
+      aoSalvar(res)
+      aoFechar()
+    } catch (err: unknown) {
+      console.error('Erro ao salvar obra:', err)
+      toast({
+        variant: 'destructive',
+        title: 'Erro ao salvar',
+        description: 'Não foi possível persistir as alterações no banco.',
+      })
+    } finally {
+      setSalvando(false)
+    }
+  }
+
+  return (
+    <Dialog open={aberto} onOpenChange={(open) => !open && aoFechar()}>
+      <DialogContent className="max-w-xl max-h-[90vh] overflow-y-auto">
+        <DialogHeader>
+          <div className="flex items-center gap-2">
+            <div className="p-2 rounded-lg bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400">
+              <Building2 className="w-5 h-5" />
+            </div>
+            <div>
+              <DialogTitle className="text-lg">Editar Obra: {obra.codigo}</DialogTitle>
+              <DialogDescription className="text-xs">
+                Atualize situação, avanço, custo, região ou atribuição de engenheiro.
+              </DialogDescription>
+            </div>
+          </div>
+        </DialogHeader>
+
+        <div className="space-y-4 py-3">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div className="space-y-1.5 md:col-span-2">
+              <Label htmlFor="nome-obra" className="text-xs font-semibold">
+                Nome do Empreendimento
+              </Label>
+              <Input
+                id="nome-obra"
+                value={nome}
+                onChange={(e) => setNome(e.target.value)}
+                placeholder="Ex: Residencial Morumbi Park"
+              />
+            </div>
+
+            <div className="space-y-1.5">
+              <Label htmlFor="municipio-obra" className="text-xs font-semibold">
+                Município
+              </Label>
+              <Input
+                id="municipio-obra"
+                value={municipio}
+                onChange={(e) => setMunicipio(e.target.value)}
+                placeholder="Ex: São Paulo"
+              />
+            </div>
+
+            <div className="space-y-1.5">
+              <Label htmlFor="regiao-obra" className="text-xs font-semibold">
+                Região
+              </Label>
+              <Select value={regiao} onValueChange={(v) => setRegiao(v as Regiao)}>
+                <SelectTrigger id="regiao-obra">
+                  <SelectValue placeholder="Selecione a região" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="R1">R1 - Metropolitana / Capital</SelectItem>
+                  <SelectItem value="R2">R2 - Campinas e Centro</SelectItem>
+                  <SelectItem value="R3">R3 - Vale do Paraíba / Litoral</SelectItem>
+                  <SelectItem value="R4">R4 - Ribeirão Preto / Noroeste</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-1.5">
+              <Label htmlFor="situacao-obra" className="text-xs font-semibold">
+                Situação Atual
+              </Label>
+              <Select value={situacao} onValueChange={(v) => setSituacao(v as SituacaoObra)}>
+                <SelectTrigger id="situacao-obra">
+                  <SelectValue placeholder="Selecione a situação" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Em andamento">Em andamento</SelectItem>
+                  <SelectItem value="Paralisada">Paralisada</SelectItem>
+                  <SelectItem value="Planejada">Planejada</SelectItem>
+                  <SelectItem value="Concluída">Concluída</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-1.5">
+              <Label htmlFor="custo-obra" className="text-xs font-semibold flex items-center gap-1">
+                <DollarSign className="w-3.5 h-3.5 text-slate-500" />
+                Custo Orçado (R$)
+              </Label>
+              <Input
+                id="custo-obra"
+                type="number"
+                min="0"
+                step="50000"
+                value={custo}
+                onChange={(e) => setCusto(Number(e.target.value))}
+              />
+              <span className="text-[11px] text-muted-foreground">
+                Formatado:{' '}
+                {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(
+                  custo,
+                )}
+              </span>
+            </div>
+          </div>
+
+          {/* Slider de Avanço Físico */}
+          <div className="p-3.5 rounded-lg border bg-slate-50 dark:bg-slate-900/50 space-y-2">
+            <div className="flex items-center justify-between">
+              <Label className="text-xs font-semibold flex items-center gap-1">
+                <Percent className="w-3.5 h-3.5 text-blue-600" />
+                Avanço Físico: <span className="font-bold text-blue-600 text-sm">{avanco}%</span>
+              </Label>
+              <span className="text-[11px] text-muted-foreground">
+                {avanco === 100 ? 'Obra Completa' : avanco > 0 ? 'Em execução' : 'Não iniciada'}
+              </span>
+            </div>
+            <Slider
+              value={[avanco]}
+              min={0}
+              max={100}
+              step={1}
+              onValueChange={(vals) => setAvanco(vals[0])}
+            />
+          </div>
+
+          {/* Atribuição de Engenheiro */}
+          <div className="p-3.5 rounded-lg border border-blue-200 dark:border-blue-900/60 bg-blue-50/50 dark:bg-blue-950/20 space-y-2.5">
+            <div className="flex items-center gap-1.5 text-blue-700 dark:text-blue-300 font-semibold text-xs">
+              <UserCheck className="w-4 h-4" />
+              Engenheiro Responsável Único
+            </div>
+
+            <Select value={engenheiroId} onValueChange={setEngenheiroId}>
+              <SelectTrigger className="bg-white dark:bg-slate-900">
+                <SelectValue placeholder="Selecione um engenheiro" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="nenhum">Nenhum engenheiro atribuído</SelectItem>
+                {engenheiros.map((eng) => (
+                  <SelectItem key={eng.id} value={eng.id}>
+                    {eng.nome}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            {obra.atribuido_em && (
+              <div className="flex items-center gap-1.5 text-[11px] text-slate-500 dark:text-slate-400">
+                <Calendar className="w-3.5 h-3.5" />
+                <span>
+                  Última atribuição por: <strong>{obra.atribuido_por_nome || 'Sistema'}</strong> em{' '}
+                  {new Date(obra.atribuido_em).toLocaleDateString('pt-BR')} às{' '}
+                  {new Date(obra.atribuido_em).toLocaleTimeString('pt-BR', {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                  })}
+                </span>
+              </div>
+            )}
+          </div>
+        </div>
+
+        <DialogFooter className="gap-2 sm:justify-end">
+          <Button variant="outline" onClick={aoFechar} disabled={salvando}>
+            Cancelar
+          </Button>
+          <Button
+            onClick={handleSalvar}
+            disabled={salvando}
+            className="bg-blue-600 hover:bg-blue-500 text-white"
+          >
+            {salvando ? 'Salvando...' : 'Salvar Alterações'}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  )
+}
