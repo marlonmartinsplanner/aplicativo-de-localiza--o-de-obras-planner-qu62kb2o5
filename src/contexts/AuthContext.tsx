@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react'
 import pb from '@/lib/pocketbase/client'
 import type { Usuario } from '@/types'
+import { isEmailCorporativo, MSG_EMAIL_CORPORATIVO } from '@/utils/auth'
 
 interface AuthContextType {
   usuario: Usuario | null
@@ -55,6 +56,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [])
 
   const login = async (email: string, pass: string) => {
+    if (!isEmailCorporativo(email)) {
+      throw new Error(MSG_EMAIL_CORPORATIVO)
+    }
     const authData = await pb.collection('users').authWithPassword(email, pass)
     setUsuario({
       id: authData.record.id,
@@ -72,6 +76,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   const recuperarSenha = async (email: string) => {
+    if (!isEmailCorporativo(email)) {
+      throw new Error(MSG_EMAIL_CORPORATIVO)
+    }
     await pb.collection('users').requestPasswordReset(email)
   }
 

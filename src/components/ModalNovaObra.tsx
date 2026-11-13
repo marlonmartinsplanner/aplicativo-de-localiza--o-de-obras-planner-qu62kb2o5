@@ -31,7 +31,7 @@ import {
   MapPin,
   MousePointerClick,
   LocateFixed,
-  Truck,
+  HardHat,
 } from 'lucide-react'
 import { Switch } from '@/components/ui/switch'
 
@@ -276,7 +276,7 @@ export function ModalNovaObra({
           {/* Obra Terceirizada */}
           <div className="flex items-center justify-between p-3.5 rounded-lg border bg-slate-50 dark:bg-slate-900/50">
             <div className="flex items-center gap-2">
-              <Truck className="w-4 h-4 text-planner-red" />
+              <HardHat className="w-4 h-4 text-planner-red" />
               <div>
                 <Label className="text-xs font-semibold">Terceirizado</Label>
                 <p className="text-[11px] text-muted-foreground">

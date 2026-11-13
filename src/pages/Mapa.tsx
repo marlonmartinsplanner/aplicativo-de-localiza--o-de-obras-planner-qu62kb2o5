@@ -6,6 +6,7 @@ import type { Obra, Engenheiro, Regiao, SituacaoObra } from '@/types'
 import { REGIOES_CONFIG, SITUACOES_CONFIG } from '@/types'
 import { ModalEdicaoObra } from '@/components/ModalEdicaoObra'
 import { SEDE } from '@/utils/regioes'
+import { corAvanco } from '@/utils/corAvanco'
 
 // Marcador FIXO da Sede da Empresa — sempre visível, não clicável, não filtrável
 function htmlPinSede(): string {
@@ -762,7 +763,7 @@ export default function Mapa() {
                           className="h-full rounded-full transition-all"
                           style={{
                             width: `${obra.avanco}%`,
-                            backgroundColor: regConf?.hex || '#2563eb',
+                            backgroundColor: corAvanco(obra.avanco || 0),
                           }}
                         />
                       </div>

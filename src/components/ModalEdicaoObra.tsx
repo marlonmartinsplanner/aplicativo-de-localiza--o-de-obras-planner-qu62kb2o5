@@ -27,7 +27,7 @@ import { regiaoPorQuadrante } from '@/utils/regioes'
 import { useAuth } from '@/contexts/AuthContext'
 import { useToast } from '@/hooks/use-toast'
 import { Switch } from '@/components/ui/switch'
-import { Building2, UserCheck, Calendar, DollarSign, Percent, MapPin, Truck } from 'lucide-react'
+import { Building2, UserCheck, Calendar, DollarSign, Percent, MapPin, HardHat } from 'lucide-react'
 
 interface ModalEdicaoObraProps {
   obra: Obra | null
@@ -282,7 +282,7 @@ export function ModalEdicaoObra({
           {/* Obra Terceirizada */}
           <div className="flex items-center justify-between p-3.5 rounded-lg border bg-slate-50 dark:bg-slate-900/50">
             <div className="flex items-center gap-2">
-              <Truck className="w-4 h-4 text-planner-red" />
+              <HardHat className="w-4 h-4 text-planner-red" />
               <div>
                 <Label className="text-xs font-semibold">Terceirizado</Label>
                 <p className="text-[11px] text-muted-foreground">

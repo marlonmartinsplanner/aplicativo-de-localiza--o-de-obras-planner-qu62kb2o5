@@ -37,6 +37,7 @@ import {
 } from 'lucide-react'
 import { ModalNovaObra } from '@/components/ModalNovaObra'
 import { useToast } from '@/hooks/use-toast'
+import { corAvanco } from '@/utils/corAvanco'
 
 type CampoOrdenacao =
   | 'codigo'
@@ -484,7 +485,7 @@ export default function Obras() {
                               className="h-full rounded-full"
                               style={{
                                 width: `${obra.avanco}%`,
-                                backgroundColor: regConf?.hex || '#2563eb',
+                                backgroundColor: corAvanco(obra.avanco || 0),
                               }}
                             />
                           </div>

@@ -1,6 +1,6 @@
 import type { Obra } from '@/types'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Truck, Building2 } from 'lucide-react'
+import { HardHat, Building2 } from 'lucide-react'
 
 interface PainelTerceirizadosProps {
   obras: Obra[]
@@ -43,7 +43,7 @@ export function PainelTerceirizados({ obras }: PainelTerceirizadosProps) {
       <CardHeader className="pb-3">
         <CardTitle className="flex items-center gap-2 text-base">
           <div className="p-2 rounded-lg bg-planner-red/10 text-planner-red">
-            <Truck className="w-5 h-5" />
+            <HardHat className="w-5 h-5" />
           </div>
           Terceirizados
           <span className="ml-auto text-xs font-normal text-muted-foreground">
@@ -56,7 +56,7 @@ export function PainelTerceirizados({ obras }: PainelTerceirizadosProps) {
         <div className="rounded-lg border border-planner-red/25 bg-planner-red/5 dark:bg-planner-red/10 p-3 space-y-2">
           <div className="flex items-center justify-between gap-2">
             <div className="flex items-center gap-1.5 text-xs font-semibold text-planner-red">
-              <Truck className="w-3.5 h-3.5" />
+              <HardHat className="w-3.5 h-3.5" />
               Terceirizadas
             </div>
             <div className="text-right">

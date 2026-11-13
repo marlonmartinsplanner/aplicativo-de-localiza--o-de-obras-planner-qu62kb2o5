@@ -21,6 +21,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 import { Lock, Mail, ArrowRight, ShieldCheck, HardHat, AlertCircle } from 'lucide-react'
+import { isEmailCorporativo, MSG_EMAIL_CORPORATIVO } from '@/utils/auth'
 import { useToast } from '@/hooks/use-toast'
 import logoPlanner from '@/assets/construtora-planner-engenharia-60ea4.png'
 import bannerPlanner from '@/assets/fundodiagramadaplanner-a5e8e.png'
@@ -91,6 +92,15 @@ export default function Login() {
         variant: 'destructive',
         title: 'Informe o e-mail',
         description: 'Digite o endereço de e-mail associado à sua conta.',
+      })
+      return
+    }
+
+    if (!isEmailCorporativo(emailRecuperacao)) {
+      toast({
+        variant: 'destructive',
+        title: 'E-mail não permitido',
+        description: MSG_EMAIL_CORPORATIVO,
       })
       return
     }

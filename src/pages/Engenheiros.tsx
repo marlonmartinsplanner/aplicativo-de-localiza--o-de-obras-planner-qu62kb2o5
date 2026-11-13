@@ -29,6 +29,7 @@ import {
 } from '@/components/ui/alert-dialog'
 import { Users, HardHat, UserPlus, Trash2, History, AlertTriangle, Briefcase } from 'lucide-react'
 import { useToast } from '@/hooks/use-toast'
+import { corAvanco } from '@/utils/corAvanco'
 
 export default function Engenheiros() {
   const { toast } = useToast()
@@ -296,8 +297,11 @@ export default function Engenheiros() {
                   </div>
                   <div className="w-full bg-slate-100 dark:bg-slate-800 h-1.5 rounded-full overflow-hidden">
                     <div
-                      className="bg-planner-blue h-full rounded-full"
-                      style={{ width: `${eng.avancoMedio}%` }}
+                      className="h-full rounded-full"
+                      style={{
+                        width: `${eng.avancoMedio}%`,
+                        backgroundColor: corAvanco(eng.avancoMedio),
+                      }}
                     />
                   </div>
                 </div>
