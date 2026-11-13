@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from 'react'
 import { Navbar } from '@/components/Navbar'
-import { listarObras, atribuirEngenheiro } from '@/services/obras'
+import { listarObras, atribuirEngenheiro, excluirTodasObras } from '@/services/obras'
+import { ExcluirTodasObrasDialog } from '@/components/ExcluirTodasObrasDialog'
 import { listarEngenheiros } from '@/services/engenheiros'
 import type { Obra, Engenheiro, Regiao, SituacaoObra } from '@/types'
 import { REGIOES_CONFIG, SITUACOES_CONFIG } from '@/types'
@@ -39,6 +40,7 @@ import {
   Printer,
   Copy,
   DollarSign,
+  Trash2,
 } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
 import { useToast } from '@/hooks/use-toast'
@@ -76,6 +78,10 @@ export default function Obras() {
   const [obraParaEditar, setObraParaEditar] = useState<Obra | null>(null)
   const [modalEdicaoAberto, setModalEdicaoAberto] = useState(false)
 
+  // Exclusão de todas as obras
+  const [dialogExclusaoAberto, setDialogExclusaoAberto] = useState(false)
+  const [excluindoTodas, setExcluindoTodas] = useState(false)
+
   const carregar = async () => {
     try {
       setCarregando(true)
@@ -97,6 +103,32 @@ export default function Obras() {
   useEffect(() => {
     carregar()
   }, [])
+
+  const handleExcluirTodas = async () => {
+    setExcluindoTodas(true)
+    try {
+      const quantidade = await excluirTodasObras()
+      setObras([])
+      setObraParaEditar(null)
+      setModalEdicaoAberto(false)
+      setDialogExclusaoAberto(false)
+      toast({
+        title: 'Obras excluídas',
+        description: `${quantidade} obras, atribuições e histórico foram apagados do banco.`,
+      })
+    } catch (e) {
+      console.error('Erro ao excluir obras:', e)
+      // Recarrega para refletir o estado real caso a exclusão tenha sido parcial
+      await carregar()
+      toast({
+        variant: 'destructive',
+        title: 'Erro ao excluir',
+        description: 'Não foi possível concluir a exclusão. A lista foi recarregada.',
+      })
+    } finally {
+      setExcluindoTodas(false)
+    }
+  }
 
   const alternarOrdenacao = (campo: CampoOrdenacao) => {
     if (campoOrdenacao === campo) {
@@ -254,6 +286,14 @@ export default function Obras() {
             >
               <Download className="w-4 h-4" />
               Exportar CSV
+            </Button>
+            <Button
+              onClick={() => setDialogExclusaoAberto(true)}
+              disabled={obras.length === 0 || carregando}
+              className="bg-planner-red hover:bg-planner-red-dark text-white gap-2 text-xs font-semibold shadow-xs"
+            >
+              <Trash2 className="w-4 h-4" />
+              Excluir todas as obras
             </Button>
           </div>
         </div>
@@ -599,7 +639,9 @@ export default function Obras() {
                 {obrasProcessadas.length === 0 && (
                   <TableRow>
                     <TableCell colSpan={9} className="text-center py-12 text-slate-500">
-                      Nenhuma obra corresponde aos filtros atuais.
+                      {obras.length === 0
+                        ? 'Nenhuma obra cadastrada.'
+                        : 'Nenhuma obra corresponde aos filtros atuais.'}
                     </TableCell>
                   </TableRow>
                 )}
@@ -608,6 +650,15 @@ export default function Obras() {
           </div>
         </div>
       </main>
+
+      {/* Confirmação: Excluir todas as obras */}
+      <ExcluirTodasObrasDialog
+        aberto={dialogExclusaoAberto}
+        aoFechar={() => setDialogExclusaoAberto(false)}
+        totalObras={totalObras}
+        processando={excluindoTodas}
+        aoConfirmar={handleExcluirTodas}
+      />
 
       {/* Modal de Edição */}
       <ModalEdicaoObra

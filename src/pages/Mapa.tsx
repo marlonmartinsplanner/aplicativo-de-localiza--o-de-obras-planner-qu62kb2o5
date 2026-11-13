@@ -811,18 +811,24 @@ export default function Mapa() {
               {obrasFiltradas.length === 0 && (
                 <div className="text-center py-10 px-4 text-slate-500">
                   <Building2 className="w-8 h-8 mx-auto text-slate-400 mb-2" />
-                  <p className="font-semibold text-sm">Nenhuma obra encontrada</p>
-                  <p className="text-xs text-slate-400 mt-1">
-                    Tente ajustar ou limpar os filtros de busca.
+                  <p className="font-semibold text-sm">
+                    {obras.length === 0 ? 'Nenhuma obra cadastrada' : 'Nenhuma obra encontrada'}
                   </p>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={limparFiltros}
-                    className="mt-3 text-xs"
-                  >
-                    Limpar Filtros
-                  </Button>
+                  {obras.length > 0 && (
+                    <>
+                      <p className="text-xs text-slate-400 mt-1">
+                        Tente ajustar ou limpar os filtros de busca.
+                      </p>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={limparFiltros}
+                        className="mt-3 text-xs"
+                      >
+                        Limpar Filtros
+                      </Button>
+                    </>
+                  )}
                 </div>
               )}
             </div>

@@ -92,6 +92,24 @@ export async function atribuirEngenheiro(
   return atualizada
 }
 
+/**
+ * Exclui TODAS as obras e o histórico de atribuições (dependente das obras).
+ * Engenheiros e usuários não são tocados. Retorna a quantidade de obras apagadas.
+ */
+export async function excluirTodasObras(): Promise<number> {
+  const historicos = await pb.collection('historico_atribuicoes').getFullList<HistoricoAtribuicao>()
+  for (const h of historicos) {
+    await pb.collection('historico_atribuicoes').delete(h.id)
+  }
+
+  const obras = await pb.collection('obras').getFullList<Obra>()
+  for (const o of obras) {
+    await pb.collection('obras').delete(o.id)
+  }
+
+  return obras.length
+}
+
 export async function zerarTodasAtribuicoes(
   usuarioNome: string,
   usuarioId?: string,
