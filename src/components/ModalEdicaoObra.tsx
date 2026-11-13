@@ -22,6 +22,7 @@ import type { Obra, Engenheiro, Regiao, SituacaoObra } from '@/types'
 import { REGIOES_CONFIG, SITUACOES_CONFIG } from '@/types'
 import { atualizarObra, atribuirEngenheiro } from '@/services/obras'
 import { MiniMapaLocalizacao } from '@/components/MiniMapaLocalizacao'
+import { CampoEndereco } from '@/components/CampoEndereco'
 import { regiaoPorQuadrante } from '@/utils/regioes'
 import { useAuth } from '@/contexts/AuthContext'
 import { useToast } from '@/hooks/use-toast'
@@ -260,6 +261,16 @@ export function ModalEdicaoObra({
                 Clique no mapa para marcar — a região é sugerida pelo quadrante em relação à Sede
               </span>
             </div>
+            {/* Endereço completo (geocodificação Nominatim) — aplica as coordenadas
+                nos MESMOS estados usados pelo clique no mini-mapa e pela digitação */}
+            <CampoEndereco
+              onCoordenadas={(lat, lng) => {
+                setLatitude(lat)
+                setLongitude(lng)
+                const sugerida = regiaoPorQuadrante(lat, lng)
+                if (sugerida) setRegiao(sugerida)
+              }}
+            />
             <MiniMapaLocalizacao
               latitude={latitude}
               longitude={longitude}
