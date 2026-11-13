@@ -1,47 +1,32 @@
+import { Home, MapPin, LayoutDashboard, Users, LogOut, Building2, Menu, X } from 'lucide-react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
-import { useAuth } from '@/contexts/AuthContext'
-import {
-  MapPin,
-  LayoutDashboard,
-  HardHat,
-  Users,
-  LogOut,
-  Building2,
-  Menu,
-  X,
-  FileSpreadsheet,
-  Share2,
-} from 'lucide-react'
-import { useState } from 'react'
 import { Button } from '@/components/ui/button'
+import { useRef, useState } from 'react'
+import { useAuth } from '@/contexts/AuthContext'
+import { useToast } from '@/hooks/use-toast'
 import logoPlanner from '@/assets/construtora-planner-engenharia-60ea4.png'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 
 interface NavbarProps {
   totalObras?: number
   atribuidasCount?: number
 }
 
-export function Navbar({ totalObras = 0, atribuidasCount }: NavbarProps) {
-  const { usuario, logout } = useAuth()
+export function Navbar({ totalObras, atribuidasCount }: NavbarProps) {
   const location = useLocation()
   const navigate = useNavigate()
-  const [menuAberto, setMenuAberto] = useState(false)
+  const { usuario, logout, atualizarAvatar } = useAuth()
+  const { toast } = useToast()
 
-  const itensNavegacao = [
+  const [mobileOpen, setMobileOpen] = useState(false)
+  const [enviandoFoto, setEnviandoFoto] = useState(false)
+  const inputFotoRef = useRef<HTMLInputElement>(null)
+
+  const navItems = [
+    { label: 'Início', path: '/', icon: Home },
     { label: 'Mapa', path: '/mapa', icon: MapPin },
     { label: 'Painel', path: '/painel', icon: LayoutDashboard },
-    { label: 'Obras', path: '/obras', icon: FileSpreadsheet },
+    { label: 'Obras', path: '/obras', icon: Building2 },
     { label: 'Engenheiros', path: '/engenheiros', icon: Users },
-    { label: 'Integração', path: '/integracao', icon: Share2 },
   ]
 
   const handleLogout = () => {
@@ -49,157 +34,211 @@ export function Navbar({ totalObras = 0, atribuidasCount }: NavbarProps) {
     navigate('/login')
   }
 
-  const getIniciais = (nome?: string) => {
-    if (!nome) return 'PL'
-    const partes = nome.split(' ')
-    if (partes.length === 1) return partes[0].substring(0, 2).toUpperCase()
-    return (partes[0][0] + partes[partes.length - 1][0]).toUpperCase()
+  // Aceita imagens de até 5 MB; acima disso avisa e não envia.
+  const handleFotoSelecionada = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    // Permite re-selecionar a mesma foto depois
+    e.target.value = ''
+    if (!file) return
+
+    if (!file.type.startsWith('image/')) {
+      toast({
+        variant: 'destructive',
+        title: 'Arquivo inválido',
+        description: 'Escolha um arquivo de imagem (JPG, PNG, WEBP etc.) para a foto do perfil.',
+      })
+      return
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      toast({
+        variant: 'destructive',
+        title: 'Arquivo muito grande',
+        description: 'A foto deve ter no máximo 5 MB. Reduza a imagem e tente novamente.',
+      })
+      return
+    }
+
+    setEnviandoFoto(true)
+    try {
+      await atualizarAvatar(file)
+      toast({
+        title: 'Foto atualizada',
+        description: 'Sua foto de perfil foi salva com sucesso.',
+      })
+    } catch (err) {
+      console.error('Erro ao enviar foto de perfil:', err)
+      toast({
+        variant: 'destructive',
+        title: 'Erro ao salvar foto',
+        description: 'Não foi possível salvar a foto do perfil. Tente novamente.',
+      })
+    } finally {
+      setEnviandoFoto(false)
+    }
   }
 
+  const iniciais =
+    (usuario?.name || usuario?.email || 'U')
+      .trim()
+      .split(/\s+/)
+      .slice(0, 2)
+      .map((p) => p.charAt(0).toUpperCase())
+      .join('') || 'U'
+
+  const urlAvatar =
+    usuario?.avatar && usuario.avatar !== ''
+      ? `${import.meta.env.VITE_POCKETBASE_URL?.replace(/\/$/, '') || ''}/api/files/users/${
+          usuario.id
+        }/${usuario.avatar}`
+      : null
+
   return (
-    <header className="sticky top-0 z-40 w-full border-b border-slate-200 dark:border-slate-800 bg-white/95 dark:bg-slate-900/95 backdrop-blur supports-[backdrop-filter]:bg-white/80 dark:supports-[backdrop-filter]:bg-slate-900/80 shadow-xs">
-      <div className="flex h-16 items-center px-4 md:px-6 justify-between max-w-7xl mx-auto">
-        {/* Logo / Marca */}
-        <div className="flex items-center gap-4 lg:gap-6">
-          <Link
-            to="/mapa"
-            className="flex items-center font-bold tracking-tight shrink-0"
-            title="Construtora Planner Engenharia"
-          >
-            <img
-              src={logoPlanner}
-              alt="Construtora Planner Engenharia"
-              className="h-10 md:h-11 w-auto max-w-[190px] md:max-w-none object-contain object-left"
-            />
-            <span className="sr-only">Construtora Planner Engenharia</span>
-          </Link>
+    <header className="sticky top-0 z-50 w-full bg-white dark:bg-slate-950 border-b border-slate-200 dark:border-slate-800 shadow-xs">
+      <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between gap-3">
+        {/* Logo + Marca */}
+        <Link to="/" className="flex items-center gap-2.5 shrink-0">
+          <img src={logoPlanner} alt="Planner Engenharia" className="w-9 h-9 object-contain" />
+          <div className="leading-tight hidden sm:block">
+            <span className="block text-sm font-bold text-slate-900 dark:text-white">
+              Planner Engenharia
+            </span>
+            <span className="block text-[10px] uppercase tracking-wider text-planner-blue font-semibold">
+              Localização de Obras
+            </span>
+          </div>
+        </Link>
 
-          {/* Links desktop */}
-          <nav className="hidden md:flex items-center gap-1">
-            {itensNavegacao.map((item) => {
-              const Icon = item.icon
-              const ativo = location.pathname === item.path
-              return (
-                <Link
-                  key={item.path}
-                  to={item.path}
-                  className={`flex items-center gap-2 px-3.5 py-2 text-sm font-medium rounded-lg transition-colors ${
+        {/* Navegação Desktop */}
+        <nav className="hidden md:flex items-center gap-1">
+          {navItems.map((item) => {
+            const ativo = location.pathname === item.path
+            return (
+              <Link key={item.path} to={item.path}>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className={
                     ativo
-                      ? 'bg-planner-blue/10 text-planner-blue-dark dark:bg-planner-blue/20 dark:text-planner-blue-light font-semibold'
-                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100 dark:text-slate-400 dark:hover:text-white dark:hover:bg-slate-800'
-                  }`}
+                      ? 'bg-planner-blue/10 text-planner-blue-dark dark:text-planner-blue-light font-semibold'
+                      : 'text-slate-600 dark:text-slate-300 hover:text-planner-blue'
+                  }
                 >
-                  <Icon
-                    className={`w-4 h-4 ${ativo ? 'text-planner-blue dark:text-planner-blue-light' : 'text-slate-400'}`}
-                  />
+                  <item.icon className="w-4 h-4 mr-1.5" />
                   {item.label}
-                </Link>
-              )
-            })}
-          </nav>
-        </div>
+                </Button>
+              </Link>
+            )
+          })}
+        </nav>
 
-        {/* Lado Direito: Status e Usuário */}
-        <div className="flex items-center gap-3">
-          {atribuidasCount !== undefined && (
-            <div className="hidden lg:flex items-center gap-2 px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs text-slate-600 dark:text-slate-300">
-              <span className="inline-block w-2 h-2 rounded-full bg-emerald-500" />
-              <span>
-                Atribuídas: <strong>{atribuidasCount}</strong>/{totalObras}
-              </span>
+        {/* Área do usuário (canto superior direito) */}
+        <div className="flex items-center gap-2">
+          {usuario && (
+            <div className="flex items-center gap-2.5">
+              {totalObras !== undefined && (
+                <span className="hidden lg:inline text-xs text-slate-500 dark:text-slate-400">
+                  {totalObras} obras · {atribuidasCount ?? 0} atribuídas
+                </span>
+              )}
+
+              {/* Foto / iniciais + nome — clique abre o seletor de imagem */}
+              <button
+                type="button"
+                onClick={() => inputFotoRef.current?.click()}
+                disabled={enviandoFoto}
+                title="Trocar foto do perfil"
+                className="group flex items-center gap-2 rounded-full pl-1 pr-2.5 py-1 border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 hover:border-planner-blue/60 hover:bg-planner-blue/5 transition-colors disabled:opacity-60 cursor-pointer"
+              >
+                <span className="relative block w-8 h-8 rounded-full overflow-hidden bg-planner-blue text-white flex items-center justify-center text-[11px] font-bold shrink-0">
+                  {urlAvatar ? (
+                    <img
+                      src={urlAvatar}
+                      alt={`Foto de ${usuario.name || usuario.email}`}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    iniciais
+                  )}
+                  {enviandoFoto && (
+                    <span className="absolute inset-0 bg-black/50 flex items-center justify-center">
+                      <span className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    </span>
+                  )}
+                </span>
+                <span className="hidden sm:flex flex-col items-start leading-tight">
+                  <span className="text-xs font-semibold text-slate-800 dark:text-slate-100">
+                    {usuario.name || usuario.email}
+                  </span>
+                  <span className="text-[10px] text-slate-500 dark:text-slate-400 group-hover:text-planner-blue">
+                    {enviandoFoto ? 'Enviando foto…' : 'Trocar foto'}
+                  </span>
+                </span>
+              </button>
+
+              <input
+                ref={inputFotoRef}
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={handleFotoSelecionada}
+              />
+
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleLogout}
+                className="text-slate-500 hover:text-planner-red"
+                title="Sair"
+              >
+                <LogOut className="w-4 h-4" />
+              </Button>
             </div>
           )}
 
-          {/* Menu do Usuário */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant="ghost"
-                className="relative flex items-center gap-2.5 h-10 px-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800"
-              >
-                <Avatar className="h-8 w-8 border border-planner-blue-200 dark:border-planner-blue/40">
-                  <AvatarFallback className="bg-planner-blue text-white font-bold text-xs">
-                    {getIniciais(usuario?.name)}
-                  </AvatarFallback>
-                </Avatar>
-                <div className="hidden sm:flex flex-col text-left">
-                  <span className="text-xs font-semibold text-slate-800 dark:text-slate-200 leading-tight">
-                    {usuario?.name || 'Marlon Martins'}
-                  </span>
-                  <span className="text-[10px] text-slate-500 dark:text-slate-400 leading-tight truncate max-w-[140px]">
-                    {usuario?.email || 'Engenheiro'}
-                  </span>
-                </div>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-56">
-              <DropdownMenuLabel className="font-normal">
-                <div className="flex flex-col space-y-1">
-                  <p className="text-xs font-semibold">{usuario?.name || 'Marlon Martins'}</p>
-                  <p className="text-[11px] text-muted-foreground truncate">{usuario?.email}</p>
-                </div>
-              </DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem
-                onClick={() => navigate('/engenheiros')}
-                className="text-xs cursor-pointer"
-              >
-                <Users className="w-4 h-4 mr-2" />
-                Painel de Engenheiros
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={() => navigate('/obras')}
-                className="text-xs cursor-pointer"
-              >
-                <HardHat className="w-4 h-4 mr-2" />
-                Tabela de Obras
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem
-                onClick={handleLogout}
-                className="text-xs text-planner-red dark:text-planner-red-light cursor-pointer"
-              >
-                <LogOut className="w-4 h-4 mr-2" />
-                Sair da Conta
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-
-          {/* Botão Mobile Hamburger */}
+          {/* Menu Mobile */}
           <Button
             variant="ghost"
-            size="icon"
-            className="md:hidden text-slate-600 dark:text-slate-300"
-            onClick={() => setMenuAberto(!menuAberto)}
+            size="sm"
+            className="md:hidden"
+            onClick={() => setMobileOpen(!mobileOpen)}
           >
-            {menuAberto ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </Button>
         </div>
       </div>
 
-      {/* Menu mobile dropdown */}
-      {menuAberto && (
-        <div className="md:hidden border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 py-3 space-y-1">
-          {itensNavegacao.map((item) => {
-            const Icon = item.icon
+      {/* Navegação Mobile */}
+      {mobileOpen && (
+        <nav className="md:hidden border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 px-4 py-3 space-y-1">
+          {navItems.map((item) => {
             const ativo = location.pathname === item.path
             return (
-              <Link
-                key={item.path}
-                to={item.path}
-                onClick={() => setMenuAberto(false)}
-                className={`flex items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-lg ${
-                  ativo
-                    ? 'bg-planner-blue/10 text-planner-blue-dark dark:bg-planner-blue/20 dark:text-planner-blue-light font-semibold'
-                    : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'
-                }`}
-              >
-                <Icon className="w-4 h-4" />
-                {item.label}
+              <Link key={item.path} to={item.path} onClick={() => setMobileOpen(false)}>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className={`w-full justify-start ${
+                    ativo
+                      ? 'bg-planner-blue/10 text-planner-blue-dark dark:text-planner-blue-light font-semibold'
+                      : 'text-slate-600 dark:text-slate-300'
+                  }`}
+                >
+                  <item.icon className="w-4 h-4 mr-2" />
+                  {item.label}
+                </Button>
               </Link>
             )
           })}
-        </div>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="w-full justify-start text-slate-500 hover:text-planner-red"
+            onClick={handleLogout}
+          >
+            <LogOut className="w-4 h-4 mr-2" />
+            Sair
+          </Button>
+        </nav>
       )}
     </header>
   )

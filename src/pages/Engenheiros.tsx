@@ -82,7 +82,7 @@ export default function Engenheiros() {
           ? Math.round(obrasDoEng.reduce((acc, o) => acc + (o.avanco || 0), 0) / qtdObras)
           : 0
 
-      // Distribuição por região (quadrantes em torno da Sede)
+      // Distribuição por região (quadrantes em torno de Sete Lagoas/MG)
       const norte = obrasDoEng.filter((o) => o.regiao === 'Norte').length
       const sul = obrasDoEng.filter((o) => o.regiao === 'Sul').length
       const leste = obrasDoEng.filter((o) => o.regiao === 'Leste').length

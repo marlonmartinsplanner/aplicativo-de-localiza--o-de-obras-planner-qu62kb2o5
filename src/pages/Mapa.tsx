@@ -220,7 +220,7 @@ export default function Mapa() {
       if (!L || !mapaRef.current) return
 
       if (!leafletMapRef.current) {
-        // Centro: Sede da Empresa (Sete Lagoas - MG), origem das regiões
+        // Centro: Sete Lagoas - MG (a Sede permanece como marcador fixo ★)
         const map = L.map(mapaRef.current, {
           zoomControl: false,
           attributionControl: false,
@@ -587,11 +587,13 @@ export default function Mapa() {
             )
           })}
 
-          {/* A Sede é fixa e não faz parte dos filtros — só legenda */}
+          {/* A Sede é fixa e não faz parte dos filtros — só legenda (a origem dos quadrantes é o centro de Sete Lagoas/MG) */}
           <div className="flex items-center gap-1.5">
             <span className="text-[13px] leading-none">★</span>
             <span className="font-medium text-slate-800 dark:text-slate-200">Sede:</span>
-            <span className="text-slate-500">marcador fixo (não filtrável)</span>
+            <span className="text-slate-500">
+              marcador fixo (não filtrável) — quadrantes em relação ao centro de Sete Lagoas/MG
+            </span>
           </div>
 
           <div className="flex items-center gap-1 ml-auto text-amber-600 dark:text-amber-400 font-medium">

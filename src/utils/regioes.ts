@@ -1,41 +1,23 @@
-import type { Regiao } from '@/types'
+export type Regiao = 'Norte' | 'Sul' | 'Leste' | 'Oeste'
+
+export type SituacaoObra = 'Em andamento' | 'Paralisada' | 'Planejada' | 'Concluída'
+
+/** Centro de Sete Lagoas/MG — origem dos quadrantes Norte/Sul/Leste/Oeste */
+export const CENTRO_SETE_LAGOAS = { lat: -19.4658, lng: -44.2467 }
+
+/** Sede da empresa (Rua Ubá, 425, Sete Lagoas - MG) — marcador fixo no mapa, NÃO é origem dos quadrantes */
+export const SEDE = { lat: -19.478723, lng: -44.249233 }
 
 /**
- * SEDE DA EMPRESA — origem fixa de todas as regiões.
- * Rua Ubá, 425 - Vale das Palmeiras, Sete Lagoas - MG, 35701-167
- * 19°28'43.5"S 44°14'57.3"W
- * Não é uma obra: é apenas marcador fixo no mapa + constante usada pela regra de região.
+ * Região da obra pelo quadrante dominante em relação ao CENTRO de Sete Lagoas/MG.
+ * Delta de latitude define Norte/Sul; delta de longitude define Leste/Oeste.
+ * O maior delta vence (empates ficam no eixo da latitude).
  */
-export const SEDE = {
-  nome: 'Sede da Empresa',
-  endereco: 'Rua Ubá, 425 - Vale das Palmeiras, Sete Lagoas - MG, 35701-167',
-  lat: -19.478723,
-  lng: -44.249233,
-} as const
-
-/**
- * REGRA DAS REGIÕES (fonte única — usada por mapa, filtros, formulários e pela
- * migração 0006, que reproduz a mesma fórmula pois o runtime de migrações não
- * importa módulos do front):
- *
- * As 4 regiões são os quadrantes geográficos EM TORNO DA SEDE (a Sede é a
- * origem). Como só existem 4 rótulos (Norte/Sul/Leste/Oeste) e não 8
- * (Norte-Leste etc.), a região do ponto é decidida pelo EIXO DOMINANTE:
- *
- *   dLat = lat - SEDE.lat,  dLng = lng - SEDE.lng
- *   se |dLat| >= |dLng| → Norte (dLat > 0) ou Sul (dLat < 0)
- *   senão               → Leste (dLng > 0) ou Oeste (dLng < 0)
- *
- * Ou seja: o quadrante cardeal para o qual o ponto "puxa mais" em distância
- * angular a partir da Sede. Determinístico, simétrico e idempotente.
- */
-export function regiaoPorQuadrante(lat?: number | null, lng?: number | null): Regiao | null {
-  if (typeof lat !== 'number' || typeof lng !== 'number') return null
-  if (!Number.isFinite(lat) || !Number.isFinite(lng)) return null
-  if (lat === SEDE.lat && lng === SEDE.lng) return null
-
-  const dLat = lat - SEDE.lat
-  const dLng = lng - SEDE.lng
-  if (Math.abs(dLat) >= Math.abs(dLng)) return dLat > 0 ? 'Norte' : 'Sul'
-  return dLng > 0 ? 'Leste' : 'Oeste'
+export function regiaoPorQuadrante(lat: number, lng: number): Regiao {
+  const dLat = lat - CENTRO_SETE_LAGOAS.lat
+  const dLng = lng - CENTRO_SETE_LAGOAS.lng
+  if (Math.abs(dLat) >= Math.abs(dLng)) {
+    return dLat >= 0 ? 'Norte' : 'Sul'
+  }
+  return dLng >= 0 ? 'Leste' : 'Oeste'
 }

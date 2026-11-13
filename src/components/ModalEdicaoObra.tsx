@@ -283,7 +283,8 @@ export function ModalEdicaoObra({
                 Localização da Obra
               </Label>
               <span className="text-[11px] text-muted-foreground">
-                Clique no mapa para marcar — a região é sugerida pelo quadrante em relação à Sede
+                Clique no mapa para marcar — a região é sugerida pelo quadrante em relação a Sete
+                Lagoas/MG
               </span>
             </div>
             {/* Endereço completo (geocodificação Nominatim) — aplica as coordenadas

@@ -17,6 +17,8 @@ import {
   Clock,
   Layers,
   ArrowUpRight,
+  Wallet,
+  ClipboardList,
 } from 'lucide-react'
 import {
   ResponsiveContainer,
@@ -67,6 +69,17 @@ export default function Painel() {
     const avancoMedio =
       total > 0 ? Math.round(obras.reduce((acc, o) => acc + (o.avanco || 0), 0) / total) : 0
 
+    // Saldo a executar: soma de custo × (100 − avanço) / 100 de TODAS as obras.
+    // Ex.: obra de R$ 1.000.000 com 90% de avanço contribui com R$ 100.000.
+    const saldoExecutar = obras.reduce(
+      (acc, o) => acc + (o.custo || 0) * ((100 - (o.avanco || 0)) / 100),
+      0,
+    )
+
+    // Obras Planejadas: quantidade e valor somado
+    const obrasPlanejadas = obras.filter((o) => o.situacao === 'Planejada')
+    const valorPlanejadas = obrasPlanejadas.reduce((acc, o) => acc + (o.custo || 0), 0)
+
     return {
       total,
       emAndamento,
@@ -76,10 +89,12 @@ export default function Painel() {
       custoTotal,
       atribuicaoTotal,
       avancoMedio,
+      saldoExecutar,
+      valorPlanejadas,
     }
   }, [obras])
 
-  // Dados para Gráfico por Região (Quantidade e Custo) — quadrantes em torno da Sede
+  // Dados para Gráfico por Região (Quantidade e Custo) — quadrantes em torno de Sete Lagoas/MG
   const dadosPorRegiao = useMemo(() => {
     const regioes: Regiao[] = ['Norte', 'Sul', 'Leste', 'Oeste']
     return regioes.map((reg) => {
@@ -159,7 +174,7 @@ export default function Painel() {
         </div>
 
         {/* Linha de KPIs Principais */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
           {/* Total de Obras */}
           <Card className="border-slate-200 dark:border-slate-800 shadow-xs">
             <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
@@ -231,7 +246,46 @@ export default function Painel() {
                 {formatarMoeda(metricas.custoTotal)}
               </div>
               <p className="text-[11px] text-slate-500 mt-1">
-                {metricas.total} obras distribuídas em Norte, Sul, Leste e Oeste da Sede
+                {metricas.total} obras distribuídas em Norte, Sul, Leste e Oeste de Sete Lagoas/MG
+              </p>
+            </CardContent>
+          </Card>
+
+          {/* Saldo a Executar — ao lado do Orçamento Portfólio */}
+          <Card className="border-slate-200 dark:border-slate-800 shadow-xs">
+            <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
+              <CardTitle className="text-xs font-medium text-slate-500">Saldo a Executar</CardTitle>
+              <div className="p-2 rounded-lg bg-planner-blue/10 dark:bg-planner-blue/20 text-planner-blue">
+                <Wallet className="w-4 h-4" />
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-planner-blue-dark dark:text-planner-blue-light">
+                {formatarMoeda(metricas.saldoExecutar)}
+              </div>
+              <p className="text-[11px] text-slate-500 mt-1">
+                Valor restante de todas as obras pelo avanço físico (custo × falta %)
+              </p>
+            </CardContent>
+          </Card>
+
+          {/* Obras Planejadas — quantidade e valor somado */}
+          <Card className="border-slate-200 dark:border-slate-800 shadow-xs">
+            <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
+              <CardTitle className="text-xs font-medium text-slate-500">Obras Planejadas</CardTitle>
+              <div className="p-2 rounded-lg bg-sky-50 dark:bg-sky-950 text-sky-600">
+                <ClipboardList className="w-4 h-4" />
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-slate-900 dark:text-white">
+                {metricas.planejadas}
+              </div>
+              <p className="text-[11px] text-slate-500 mt-1">
+                Valor somado:{' '}
+                <strong className="text-slate-800 dark:text-slate-200">
+                  {formatarMoeda(metricas.valorPlanejadas)}
+                </strong>
               </p>
             </CardContent>
           </Card>
@@ -252,7 +306,7 @@ export default function Painel() {
                 </span>
               </CardTitle>
               <CardDescription className="text-xs">
-                Quadrantes em torno da Sede da Empresa (Sete Lagoas - MG) — {metricas.total} obras
+                Quadrantes em torno do centro de Sete Lagoas/MG — {metricas.total} obras
               </CardDescription>
             </CardHeader>
             <CardContent className="pt-4">

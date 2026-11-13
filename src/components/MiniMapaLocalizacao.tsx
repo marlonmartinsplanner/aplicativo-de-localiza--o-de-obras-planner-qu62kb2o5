@@ -1,10 +1,10 @@
 import { useEffect, useRef } from 'react'
 import { REGIOES_CONFIG } from '@/types'
 import type { Regiao } from '@/types'
-import { SEDE } from '@/utils/regioes'
+import { SEDE, CENTRO_SETE_LAGOAS } from '@/utils/regioes'
 
-// Coordenadas aproximadas do centro de visão (Sede e arredores)
-const CENTRO_VISAO: [number, number] = [SEDE.lat, SEDE.lng]
+// Centro de visão: o CENTRO de Sete Lagoas/MG (origem dos quadrantes)
+const CENTRO_VISAO: [number, number] = [CENTRO_SETE_LAGOAS.lat, CENTRO_SETE_LAGOAS.lng]
 
 // Mesmo visual de pin da tela Mapa (círculo colorido pela região, com bico)
 export function htmlPin(regiao: Regiao): string {
@@ -78,7 +78,8 @@ interface MiniMapaLocalizacaoProps {
 /**
  * Mini-mapa de captura de coordenadas (usado nos modais Nova/Edição de obra).
  * Leaflet via CDN, mesmo padrão da tela Mapa. Sempre desenha o marcador fixo
- * da Sede e sugere a região pelo quadrante em relação a ela (via aoSelecionar).
+ * da Sede e sugere a região pelo quadrante em relação ao centro de Sete Lagoas/MG (via aoSelecionar).
+ * (A Sede continua sendo marcador fixo no mini-mapa; a origem dos quadrantes é o centro da cidade.)
  */
 export function MiniMapaLocalizacao({
   latitude,

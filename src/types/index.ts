@@ -55,8 +55,8 @@ export interface Usuario {
   avatar?: string
 }
 
-// 4 cores da paleta Planner redistribuídas para as 4 novas regiões
-// (Norte/Sul/Leste/Oeste — quadrantes em torno da Sede, ver src/utils/regioes.ts)
+// 4 cores da paleta Planner redistribuídas para as 4 regiões
+// (Norte/Sul/Leste/Oeste — quadrantes em torno de Sete Lagoas/MG, ver src/utils/regioes.ts)
 export const REGIOES_CONFIG: Record<
   Regiao,
   {
@@ -69,7 +69,7 @@ export const REGIOES_CONFIG: Record<
   }
 > = {
   Norte: {
-    nome: 'Norte da Sede',
+    nome: 'Norte de Sete Lagoas',
     cor: 'Azul Planner',
     hex: '#2563eb', // blue-600
     bgClass: 'bg-blue-500/15 text-blue-700 dark:text-blue-300 border-blue-300 dark:border-blue-700',
@@ -77,7 +77,7 @@ export const REGIOES_CONFIG: Record<
     textClass: 'text-blue-600 dark:text-blue-400',
   },
   Sul: {
-    nome: 'Sul da Sede',
+    nome: 'Sul de Sete Lagoas',
     cor: 'Verde Esmeralda',
     hex: '#059669', // emerald-600
     bgClass:
@@ -86,7 +86,7 @@ export const REGIOES_CONFIG: Record<
     textClass: 'text-emerald-600 dark:text-emerald-400',
   },
   Leste: {
-    nome: 'Leste da Sede',
+    nome: 'Leste de Sete Lagoas',
     cor: 'Laranja Âmbar',
     hex: '#d97706', // amber-600
     bgClass:
@@ -95,7 +95,7 @@ export const REGIOES_CONFIG: Record<
     textClass: 'text-amber-600 dark:text-amber-400',
   },
   Oeste: {
-    nome: 'Oeste da Sede',
+    nome: 'Oeste de Sete Lagoas',
     cor: 'Púrpura Violeta',
     hex: '#7c3aed', // violet-600
     bgClass:

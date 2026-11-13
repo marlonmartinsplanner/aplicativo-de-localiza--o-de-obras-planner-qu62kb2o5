@@ -353,7 +353,7 @@ export function ModalNovaObra({
               />
             </div>
             <p className="text-[11px] text-slate-500 dark:text-slate-400">
-              Região sugerida pelo quadrante em relação à Sede:{' '}
+              Região sugerida pelo quadrante em relação a Sete Lagoas/MG:{' '}
               <strong className="text-planner-blue-dark dark:text-planner-blue-light">
                 {regiao}
               </strong>{' '}

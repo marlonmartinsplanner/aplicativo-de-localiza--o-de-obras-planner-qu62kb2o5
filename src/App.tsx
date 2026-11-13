@@ -11,7 +11,6 @@ import Mapa from '@/pages/Mapa'
 import Painel from '@/pages/Painel'
 import Obras from '@/pages/Obras'
 import Engenheiros from '@/pages/Engenheiros'
-import Integracao from '@/pages/Integracao'
 import NotFound from '@/pages/NotFound'
 
 const App = () => (
@@ -67,15 +66,6 @@ const App = () => (
               </RotaProtegida>
             }
           />
-          <Route
-            path="/integracao"
-            element={
-              <RotaProtegida>
-                <Integracao />
-              </RotaProtegida>
-            }
-          />
-
           {/* Rota 404 */}
           <Route path="*" element={<NotFound />} />
         </Routes>

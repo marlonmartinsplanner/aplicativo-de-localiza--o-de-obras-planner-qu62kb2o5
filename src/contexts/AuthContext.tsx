@@ -9,6 +9,7 @@ interface AuthContextType {
   login: (email: string, pass: string) => Promise<void>
   logout: () => void
   recuperarSenha: (email: string) => Promise<void>
+  atualizarAvatar: (arquivo: File) => Promise<void>
   estaAutenticado: boolean
 }
 
@@ -74,6 +75,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await pb.collection('users').requestPasswordReset(email)
   }
 
+  // Upload da foto de perfil do usuário logado (arquivo de imagem já validado
+  // pela navbar — tipo e tamanho). O PocketBase grava o arquivo e o authStore
+  // é atualizado, propagando o novo avatar para toda a aplicação.
+  const atualizarAvatar = async (arquivo: File) => {
+    const registro = pb.authStore.record
+    if (!registro) throw new Error('Usuário não autenticado.')
+
+    const form = new FormData()
+    form.append('avatar', arquivo)
+
+    const atualizado = await pb.collection('users').update(registro.id, form)
+    // Força o authStore a refletir o novo registro (novo token com avatar)
+    pb.authStore.save(atualizado.token ?? pb.authStore.token, atualizado)
+  }
+
   return (
     <AuthContext.Provider
       value={{
@@ -83,6 +99,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         login,
         logout,
         recuperarSenha,
+        atualizarAvatar,
         estaAutenticado: Boolean(usuario && token),
       }}
     >
