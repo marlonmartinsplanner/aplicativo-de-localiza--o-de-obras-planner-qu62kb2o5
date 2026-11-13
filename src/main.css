@@ -125,6 +125,22 @@
   --planner-red: #c8102e;
 }
 
+/* Anel pulsante do pin da obra em foco (navegação Tabela/Painel → Mapa) */
+@keyframes obra-foco-ping {
+  0% {
+    transform: scale(0.9);
+    opacity: 0.9;
+  }
+  100% {
+    transform: scale(1.8);
+    opacity: 0;
+  }
+}
+
+.obra-foco-anel {
+  animation: obra-foco-ping 1.4s ease-out infinite;
+}
+
 @layer utilities {
   /* KEEP ALL THE ANIMATIONS CLASSES THAT ARE USED BELOW */
   @keyframes accordion-down {

@@ -37,6 +37,7 @@ import {
 } from 'lucide-react'
 import { ModalNovaObra } from '@/components/ModalNovaObra'
 import { useToast } from '@/hooks/use-toast'
+import { useNavigate } from 'react-router-dom'
 import { corAvanco } from '@/utils/corAvanco'
 
 type CampoOrdenacao =
@@ -52,6 +53,12 @@ type DirecaoOrdenacao = 'asc' | 'desc'
 
 export default function Obras() {
   const { toast } = useToast()
+  const navigate = useNavigate()
+
+  // Navega para o Mapa com o pin desta obra em foco (centralizado e destacado)
+  const verObraNoMapa = (obraId: string) => {
+    navigate(`/mapa?obra=${obraId}`)
+  }
 
   const [obras, setObras] = useState<Obra[]>([])
   const [engenheiros, setEngenheiros] = useState<Engenheiro[]>([])
@@ -425,7 +432,8 @@ export default function Obras() {
                   return (
                     <TableRow
                       key={obra.id}
-                      className="hover:bg-slate-50/80 dark:hover:bg-slate-800/50"
+                      className="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 cursor-pointer"
+                      onClick={() => verObraNoMapa(obra.id)}
                     >
                       <TableCell className="font-mono font-semibold text-xs text-slate-600 dark:text-slate-400">
                         <div className="flex items-center gap-1.5">
@@ -522,18 +530,33 @@ export default function Obras() {
                       </TableCell>
 
                       <TableCell className="text-right">
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-8 w-8 text-slate-500 hover:text-planner-blue hover:bg-planner-blue/10 dark:hover:bg-planner-blue/20"
-                          onClick={() => {
-                            setObraParaEditar(obra)
-                            setModalEdicaoAberto(true)
-                          }}
-                          title="Editar obra e atribuir engenheiro"
-                        >
-                          <Pencil className="w-4 h-4" />
-                        </Button>
+                        <div className="flex items-center justify-end gap-1">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8 text-slate-500 hover:text-planner-blue hover:bg-planner-blue/10 dark:hover:bg-planner-blue/20"
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              verObraNoMapa(obra.id)
+                            }}
+                            title="Ver obra no mapa"
+                          >
+                            <MapPin className="w-4 h-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8 text-slate-500 hover:text-planner-blue hover:bg-planner-blue/10 dark:hover:bg-planner-blue/20"
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              setObraParaEditar(obra)
+                              setModalEdicaoAberto(true)
+                            }}
+                            title="Editar obra e atribuir engenheiro"
+                          >
+                            <Pencil className="w-4 h-4" />
+                          </Button>
+                        </div>
                       </TableCell>
                     </TableRow>
                   )

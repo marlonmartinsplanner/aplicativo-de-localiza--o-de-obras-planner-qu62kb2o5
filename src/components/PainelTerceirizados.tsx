@@ -6,10 +6,6 @@ interface PainelTerceirizadosProps {
   obras: Obra[]
 }
 
-function formatarBRL(valor: number) {
-  return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(valor)
-}
-
 // Barra horizontal com o percentual, na paleta da marca (azul = próprias, vermelho = terceirizadas)
 function BarraPercentual({ percentual, cor }: { percentual: number; cor: string }) {
   return (
@@ -22,21 +18,15 @@ function BarraPercentual({ percentual, cor }: { percentual: number; cor: string 
   )
 }
 
-// Seção "Terceirizados" do Painel — mostra obras terceirizadas × próprias,
-// com quantidade, valor somado e percentuais (do total de obras e do valor total).
+// Seção "Terceirizados" do Painel — obras terceirizadas × próprias,
+// SOMENTE percentual físico: quantidade de obras e % do total (sem valores em R$).
 export function PainelTerceirizados({ obras }: PainelTerceirizadosProps) {
   const total = obras.length
   const terceirizadas = obras.filter((o) => o.terceirizado)
   const proprias = obras.filter((o) => !o.terceirizado)
 
-  const valorTerceirizadas = terceirizadas.reduce((acc, o) => acc + (o.custo || 0), 0)
-  const valorProprias = proprias.reduce((acc, o) => acc + (o.custo || 0), 0)
-  const valorTotal = valorTerceirizadas + valorProprias
-
   const pctQtdTerceirizadas = total > 0 ? (terceirizadas.length / total) * 100 : 0
   const pctQtdProprias = total > 0 ? (proprias.length / total) * 100 : 0
-  const pctValorTerceirizadas = valorTotal > 0 ? (valorTerceirizadas / valorTotal) * 100 : 0
-  const pctValorProprias = valorTotal > 0 ? (valorProprias / valorTotal) * 100 : 0
 
   return (
     <Card className="border-planner-red/20 dark:border-planner-red/30">
@@ -63,15 +53,12 @@ export function PainelTerceirizados({ obras }: PainelTerceirizadosProps) {
               <div className="text-lg font-bold text-planner-red leading-none">
                 {terceirizadas.length}
               </div>
-              <div className="text-[11px] text-muted-foreground">
-                {formatarBRL(valorTerceirizadas)}
-              </div>
+              <div className="text-[11px] text-muted-foreground">obras</div>
             </div>
           </div>
           <BarraPercentual percentual={pctQtdTerceirizadas} cor="#c8102e" />
-          <div className="flex items-center justify-between text-[11px] text-muted-foreground">
-            <span>{pctQtdTerceirizadas.toFixed(1)}% das obras</span>
-            <span>{pctValorTerceirizadas.toFixed(1)}% do valor</span>
+          <div className="flex items-center justify-end text-[11px] text-muted-foreground">
+            <span>{pctQtdTerceirizadas.toFixed(1)}% do total de obras</span>
           </div>
         </div>
 
@@ -86,19 +73,18 @@ export function PainelTerceirizados({ obras }: PainelTerceirizadosProps) {
               <div className="text-lg font-bold text-planner-blue-dark dark:text-planner-blue-light leading-none">
                 {proprias.length}
               </div>
-              <div className="text-[11px] text-muted-foreground">{formatarBRL(valorProprias)}</div>
+              <div className="text-[11px] text-muted-foreground">obras</div>
             </div>
           </div>
           <BarraPercentual percentual={pctQtdProprias} cor="#2196d3" />
-          <div className="flex items-center justify-between text-[11px] text-muted-foreground">
-            <span>{pctQtdProprias.toFixed(1)}% das obras</span>
-            <span>{pctValorProprias.toFixed(1)}% do valor</span>
+          <div className="flex items-center justify-end text-[11px] text-muted-foreground">
+            <span>{pctQtdProprias.toFixed(1)}% do total de obras</span>
           </div>
         </div>
 
         <p className="text-[11px] text-muted-foreground">
-          Percentuais calculados sobre o total de {total} obra{total === 1 ? '' : 's'} e valor total
-          de {formatarBRL(valorTotal)}. A flag não interfere na contagem de engenheiros.
+          Percentual físico calculado sobre o total de {total} obra{total === 1 ? '' : 's'} — sem
+          valores financeiros. A flag não interfere na contagem de engenheiros.
         </p>
       </CardContent>
     </Card>

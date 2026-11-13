@@ -1,8 +1,8 @@
 import { useMemo } from 'react'
 import type { Obra, Engenheiro } from '@/types'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
-import { HardHat, UserX, Users } from 'lucide-react'
-import { Link } from 'react-router-dom'
+import { HardHat, UserX, Users, MapPin } from 'lucide-react'
+import { Link, useNavigate } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 
 interface Props {
@@ -13,6 +13,7 @@ interface Props {
 interface LinhaCarga {
   id: string
   nome: string
+  obras: Obra[]
   qtdObras: number
   valor: number
   pctObras: number
@@ -27,6 +28,7 @@ const COR_SEM_ENGENHEIRO = '#c8102e' // planner-red
 export function PainelEngenheiros({ obras, engenheiros }: Props) {
   const totalObras = obras.length
   const custoTotal = obras.reduce((acc, o) => acc + (o.custo || 0), 0)
+  const navigate = useNavigate()
 
   const linhas = useMemo<LinhaCarga[]>(() => {
     const porEng = engenheiros
@@ -36,6 +38,7 @@ export function PainelEngenheiros({ obras, engenheiros }: Props) {
         return {
           id: eng.id,
           nome: eng.nome,
+          obras: obrasEng,
           qtdObras: obrasEng.length,
           valor,
           pctObras: totalObras > 0 ? (obrasEng.length / totalObras) * 100 : 0,
@@ -50,6 +53,7 @@ export function PainelEngenheiros({ obras, engenheiros }: Props) {
     const linhaSem: LinhaCarga = {
       id: 'sem-engenheiro',
       nome: 'Sem engenheiro',
+      obras: semEng,
       qtdObras: semEng.length,
       valor: valorSem,
       pctObras: totalObras > 0 ? (semEng.length / totalObras) * 100 : 0,
@@ -196,6 +200,30 @@ export function PainelEngenheiros({ obras, engenheiros }: Props) {
                     {l.qtdObras} de {totalObras}
                   </span>
                 </div>
+
+                {/* Obras sob gestão — clicar leva ao Mapa na localização da obra */}
+                {l.obras.length > 0 && (
+                  <div className="mt-2 pt-2 border-t border-slate-100 dark:border-slate-800">
+                    <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-400 mb-1.5">
+                      Obras sob gestão ({l.obras.length})
+                    </p>
+                    <div className="flex flex-wrap gap-1.5">
+                      {l.obras.map((obra) => (
+                        <button
+                          key={obra.id}
+                          type="button"
+                          title={`Ver "${obra.nome}" no mapa`}
+                          onClick={() => navigate(`/mapa?obra=${obra.id}`)}
+                          className="inline-flex items-center gap-1 max-w-full rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-1.5 py-0.5 text-[10px] font-medium text-slate-600 dark:text-slate-300 hover:border-planner-blue hover:text-planner-blue hover:bg-planner-blue/5 dark:hover:bg-planner-blue/10 transition-colors cursor-pointer"
+                        >
+                          <MapPin className="w-3 h-3 shrink-0" />
+                          <span className="font-mono font-bold">{obra.codigo}</span>
+                          <span className="truncate max-w-[140px]">{obra.nome}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             ))}
 

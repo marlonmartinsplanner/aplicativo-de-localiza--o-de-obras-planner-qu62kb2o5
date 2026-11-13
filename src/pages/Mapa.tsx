@@ -1,4 +1,5 @@
 import { useState, useMemo, useEffect, useRef } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { Navbar } from '@/components/Navbar'
 import { listarObras, atribuirEngenheiro } from '@/services/obras'
 import { listarEngenheiros } from '@/services/engenheiros'
@@ -107,6 +108,27 @@ export default function Mapa() {
   const mapaRef = useRef<HTMLDivElement>(null)
   const leafletMapRef = useRef<any>(null)
   const markersLayerRef = useRef<any>(null)
+
+  // Obra alvo vinda de outra tela (Tabela de Obras / Painel): /mapa?obra=<id>
+  const [parametrosURL, setParametrosURL] = useSearchParams()
+  const obraAlvoId = parametrosURL.get('obra')
+
+  // Foco pendente: aguarda os marcadores estarem renderizados antes de destacar
+  const focoPendenteRef = useRef<string | null>(null)
+  const temporizadorFocoRef = useRef<number | null>(null)
+
+  const limparFoco = () => {
+    if (temporizadorFocoRef.current !== null) {
+      window.clearTimeout(temporizadorFocoRef.current)
+      temporizadorFocoRef.current = null
+    }
+    focoPendenteRef.current = null
+  }
+
+  // Desarma o foco pendente quando a navegação para uma obra desaparece
+  useEffect(() => {
+    if (!obraAlvoId) limparFoco()
+  }, [obraAlvoId])
 
   // Carregar dados do banco
   const carregarDados = async () => {
@@ -417,13 +439,23 @@ export default function Mapa() {
       const marker = L.marker([cl.latitude, cl.longitude], { icon: customIcon })
 
       marker.on('click', () => {
-        setClusterSelecionado(cl)
-        setObraSelecionada(cl.obras[0])
-        setMostrarListaLateral(true)
+        aplicarFoco(cl, obraAlvoId === cl.obras[0].id ? cl.obras[0] : null)
       })
 
       markersLayerRef.current.addLayer(marker)
     })
+
+    // Foco pendente: os marcadores acabaram de ser (re)criados — aplica agora
+    if (focoPendenteRef.current) {
+      const idAlvo = focoPendenteRef.current
+      focoPendenteRef.current = null
+      const clAlvo = clusters.find((c) => c.obras.some((o) => o.id === idAlvo))
+      if (clAlvo) {
+        const obraAlvo = clAlvo.obras.find((o) => o.id === idAlvo) || clAlvo.obras[0]
+        aplicarFoco(clAlvo, obraAlvo)
+        setParametrosURL({}, { replace: true })
+      }
+    }
   }
 
   useEffect(() => {
@@ -435,6 +467,63 @@ export default function Mapa() {
       leafletMapRef.current.flyTo([lat, lon], 18, { duration: 1.2 })
     }
   }
+
+  // Aplica o foco num ponto: centraliza, abre o ponto no painel lateral e destaca a obra
+  const aplicarFoco = (cluster: ClusterPonto, obraDestacada: Obra | null) => {
+    setClusterSelecionado(cluster)
+    setObraSelecionada(obraDestacada || cluster.obras[0])
+    setMostrarListaLateral(true)
+    centralizarNoPonto(cluster.latitude, cluster.longitude)
+  }
+
+  // Navegação de outra tela (Tabela de Obras / Painel): /mapa?obra=<id>
+  // Agenda o foco e aplica em até 10 tentativas (a cada 300 ms) — os marcadores são
+  // criados de forma assíncrona (script CDN do Leaflet + carregamento do banco), e o
+  // "retry" cobre tanto a inicialização do mapa quanto a troca de camada.
+  useEffect(() => {
+    if (!obraAlvoId) return
+    const obraAlvo = obras.find((o) => o.id === obraAlvoId)
+    if (!obraAlvo) return
+
+    focoPendenteRef.current = obraAlvoId
+    let tentativas = 0
+
+    const tentarFocar = () => {
+      temporizadorFocoRef.current = null
+      if (focoPendenteRef.current !== obraAlvoId) return
+
+      const L = (window as any).L
+      const map = leafletMapRef.current
+      if (L && map) {
+        const clAlvo = clusters.find((c) => c.obras.some((o) => o.id === obraAlvoId))
+        if (clAlvo) {
+          focoPendenteRef.current = null
+          const obraDestacada = clAlvo.obras.find((o) => o.id === obraAlvoId) || clAlvo.obras[0]
+          aplicarFoco(clAlvo, obraDestacada)
+          // Limpa o ?obra= da URL: o foco já foi aplicado e não deve ser re-disparado
+          // quando as obras/clusters mudarem (ex.: depois de editar uma obra)
+          setParametrosURL({}, { replace: true })
+          return
+        }
+      }
+
+      // O mapa/cluster da obra ainda não está pronto — tenta de novo por um tempo limitado
+      tentativas += 1
+      if (tentativas < 10) {
+        temporizadorFocoRef.current = window.setTimeout(tentarFocar, 300)
+      } else {
+        limparFoco()
+        toast({
+          title: 'Não foi possível focar a obra',
+          description: 'A obra existe, mas não está visível no mapa (verifique os filtros).',
+        })
+      }
+    }
+
+    tentarFocar()
+
+    return limparFoco
+  }, [obraAlvoId, obras, clusters])
 
   const atribuirEngenheiroRapido = async (obraId: string, engId: string | null) => {
     try {
