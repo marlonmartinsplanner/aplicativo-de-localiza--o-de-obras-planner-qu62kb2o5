@@ -239,7 +239,7 @@ export default function Obras() {
           <div>
             <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white flex items-center gap-2.5">
               <Building2 className="w-6 h-6 text-planner-blue" />
-              Tabela das 41 Obras
+              Tabela de Obras ({totalObras})
             </h1>
             <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
               Listagem cadastral completa com busca, ordenação de colunas, edição direta no banco e

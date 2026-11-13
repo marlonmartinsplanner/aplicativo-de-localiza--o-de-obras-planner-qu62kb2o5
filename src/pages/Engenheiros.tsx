@@ -361,7 +361,7 @@ export default function Engenheiros() {
             className="print-logo h-12 w-auto mb-2"
           />
           <p className="font-bold text-sm">
-            PLANNER ENGENHARIA &bull; PAUTA DE DISTRIBUIÇÃO DAS 41 OBRAS
+            PLANNER ENGENHARIA &bull; PAUTA DE DISTRIBUIÇÃO DE {obras.length} OBRAS
           </p>
           <p>
             Data de emissão: {new Date().toLocaleDateString('pt-BR')} &bull; Responsável:{' '}

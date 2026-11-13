@@ -133,8 +133,8 @@ export default function Painel() {
               Painel de Indicadores Estratégicos
             </h1>
             <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
-              Visão executiva das 41 obras da Planner Engenharia, distribuição orçamentária e carga
-              operacional
+              Visão executiva das {metricas.total} obras da Planner Engenharia, distribuição
+              orçamentária e carga operacional
             </p>
           </div>
 
@@ -230,7 +230,7 @@ export default function Painel() {
                 {formatarMoeda(metricas.custoTotal)}
               </div>
               <p className="text-[11px] text-slate-500 mt-1">
-                41 obras distribuídas em R1, R2, R3 e R4
+                {metricas.total} obras distribuídas em R1, R2, R3 e R4
               </p>
             </CardContent>
           </Card>
@@ -251,7 +251,7 @@ export default function Painel() {
                 </span>
               </CardTitle>
               <CardDescription className="text-xs">
-                Distribuição das 41 obras pelas 4 macrorregiões do estado
+                Distribuição das {metricas.total} obras pelas 4 macrorregiões do estado
               </CardDescription>
             </CardHeader>
             <CardContent className="pt-4">
@@ -360,7 +360,7 @@ export default function Painel() {
                               <p className="font-semibold">{data.nome}</p>
                               <p className="text-emerald-400">
                                 {data.quantidade} obras (
-                                {Math.round((data.quantidade / metricas.total) * 100)}%)
+                                {Math.round((data.quantidade / (metricas.total || 1)) * 100)}%)
                               </p>
                             </div>
                           )

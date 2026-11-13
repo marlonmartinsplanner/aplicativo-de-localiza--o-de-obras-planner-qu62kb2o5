@@ -29,7 +29,7 @@ interface NavbarProps {
   atribuidasCount?: number
 }
 
-export function Navbar({ totalObras = 41, atribuidasCount }: NavbarProps) {
+export function Navbar({ totalObras = 0, atribuidasCount }: NavbarProps) {
   const { usuario, logout } = useAuth()
   const location = useLocation()
   const navigate = useNavigate()
@@ -38,7 +38,7 @@ export function Navbar({ totalObras = 41, atribuidasCount }: NavbarProps) {
   const itensNavegacao = [
     { label: 'Mapa', path: '/mapa', icon: MapPin },
     { label: 'Painel', path: '/painel', icon: LayoutDashboard },
-    { label: 'Obras (41)', path: '/obras', icon: FileSpreadsheet },
+    { label: 'Obras', path: '/obras', icon: FileSpreadsheet },
     { label: 'Engenheiros', path: '/engenheiros', icon: Users },
   ]
 
