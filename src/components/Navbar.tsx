@@ -170,7 +170,6 @@ export function Navbar({ totalObras = 41, atribuidasCount }: NavbarProps) {
             className="md:hidden text-slate-600 dark:text-slate-300"
             onClick={() => setMenuAberto(!menuAberto)}
           >
->>>>>>>
             {menuAberto ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </Button>
         </div>

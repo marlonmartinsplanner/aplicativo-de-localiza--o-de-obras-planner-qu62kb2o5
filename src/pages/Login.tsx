@@ -140,11 +140,10 @@ export default function Login() {
           />
           <div className="hidden md:block max-w-md">
             <h2 className="text-2xl lg:text-3xl font-bold text-white leading-tight drop-shadow-md">
-              Sistema Integrado de Distribuição e Gestão das 41 Obras
+              Sistema Integrado de Distribuição e Gestão de Obras
             </h2>
             <p className="text-sm lg:text-base text-blue-100/90 mt-3">
-              Acompanhe regiões R1–R4, avance na alocação técnica e mantenha a carga de trabalho
-              equilibrada entre os engenheiros.
+              Planejando pra fazer acontecer
             </p>
           </div>
         </div>

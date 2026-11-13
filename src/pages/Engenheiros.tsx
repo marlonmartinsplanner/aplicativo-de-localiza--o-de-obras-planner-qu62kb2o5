@@ -574,7 +574,9 @@ export default function Engenheiros() {
                         {h.obra_nome || 'Obra'}
                       </span>
                       <span className="text-slate-400 mx-1.5">&bull;</span>
-                      <span className="text-planner-blue-dark dark:text-planner-blue-light font-medium">{h.acao}</span>
+                      <span className="text-planner-blue-dark dark:text-planner-blue-light font-medium">
+                        {h.acao}
+                      </span>
                     </div>
                   </div>
                   <div className="text-[11px] text-slate-400 shrink-0">

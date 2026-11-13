@@ -463,7 +463,9 @@ export default function Obras() {
                   <TableHead
                     className="cursor-pointer text-right"
                     onClick={() => alternarOrdenacao('custo')}
-                  >                    <div className="flex items-center gap-1">
+                  >
+                    {' '}
+                    <div className="flex items-center gap-1">
                       Engenheiro Responsável
                       {campoOrdenacao === 'engenheiro' ? (
                         direcaoOrdenacao === 'asc' ? (
