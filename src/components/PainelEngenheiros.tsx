@@ -16,10 +16,15 @@ interface LinhaCarga {
   obras: Obra[]
   qtdObras: number
   valor: number
+  saldo: number
   pctObras: number
   pctValor: number
   semEngenheiro?: boolean
 }
+
+// Saldo a executar: custo × (100 − avanço) / 100 — mesma fórmula do KPI do Painel
+const saldoDasObras = (lista: Obra[]) =>
+  lista.reduce((acc, o) => acc + (o.custo || 0) * ((100 - (o.avanco || 0)) / 100), 0)
 
 // Cores da marca Planner (azul/vermelho) — não reaproveita as cores das regiões
 const COR_ENGENHEIRO = '#2196d3' // planner-blue
@@ -41,6 +46,7 @@ export function PainelEngenheiros({ obras, engenheiros }: Props) {
           obras: obrasEng,
           qtdObras: obrasEng.length,
           valor,
+          saldo: saldoDasObras(obrasEng),
           pctObras: totalObras > 0 ? (obrasEng.length / totalObras) * 100 : 0,
           pctValor: custoTotal > 0 ? (valor / custoTotal) * 100 : 0,
         }
@@ -56,6 +62,7 @@ export function PainelEngenheiros({ obras, engenheiros }: Props) {
       obras: semEng,
       qtdObras: semEng.length,
       valor: valorSem,
+      saldo: saldoDasObras(semEng),
       pctObras: totalObras > 0 ? (semEng.length / totalObras) * 100 : 0,
       pctValor: custoTotal > 0 ? (valorSem / custoTotal) * 100 : 0,
       semEngenheiro: true,
@@ -116,10 +123,11 @@ export function PainelEngenheiros({ obras, engenheiros }: Props) {
         ) : (
           <div className="space-y-3">
             {/* Cabeçalho da tabela (desktop) */}
-            <div className="hidden md:grid grid-cols-[minmax(0,1.4fr)_80px_minmax(0,1.2fr)_110px_110px] gap-3 px-3 text-[10px] font-semibold uppercase tracking-wide text-slate-400">
+            <div className="hidden md:grid grid-cols-[minmax(0,1.4fr)_80px_minmax(0,1.2fr)_minmax(0,1.2fr)_110px_110px] gap-3 px-3 text-[10px] font-semibold uppercase tracking-wide text-slate-400">
               <span>Engenheiro</span>
               <span className="text-center">Obras</span>
               <span>Valor das Obras</span>
+              <span>Saldo a Executar</span>
               <span className="text-right">% Obras</span>
               <span className="text-right">% Valor</span>
             </div>
@@ -133,7 +141,7 @@ export function PainelEngenheiros({ obras, engenheiros }: Props) {
                     : 'border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 hover:border-planner-blue/40 dark:hover:border-planner-blue/50'
                 }`}
               >
-                <div className="grid grid-cols-1 md:grid-cols-[minmax(0,1.4fr)_80px_minmax(0,1.2fr)_110px_110px] gap-1.5 md:gap-3 items-center">
+                <div className="grid grid-cols-1 md:grid-cols-[minmax(0,1.4fr)_80px_minmax(0,1.2fr)_minmax(0,1.2fr)_110px_110px] gap-1.5 md:gap-3 items-center">
                   {/* Nome */}
                   <div className="flex items-center gap-2 min-w-0">
                     {l.semEngenheiro ? (
@@ -164,6 +172,14 @@ export function PainelEngenheiros({ obras, engenheiros }: Props) {
                       Valor:
                     </span>
                     {formatarMoeda(l.valor)}
+                  </div>
+
+                  {/* Saldo a executar dos contratos */}
+                  <div className="text-sm font-semibold text-planner-blue-dark dark:text-planner-blue-light truncate">
+                    <span className="md:hidden text-[10px] font-medium text-slate-400 uppercase mr-1">
+                      Saldo:
+                    </span>
+                    {formatarMoeda(l.saldo)}
                   </div>
 
                   {/* % obras e % valor */}
