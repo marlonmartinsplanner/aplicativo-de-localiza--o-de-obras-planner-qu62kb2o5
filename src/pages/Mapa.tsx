@@ -226,7 +226,7 @@ export default function Mapa() {
           attributionControl: false,
           scrollWheelZoom: true,
           doubleClickZoom: true,
-          maxZoom: 20,
+          maxZoom: 21,
           minZoom: 4,
           maxBounds: L.latLngBounds([-25, -55], [-8, -38]),
           maxBoundsViscosity: 0.5,
@@ -261,7 +261,7 @@ export default function Mapa() {
         L.tileLayer(
           'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
           {
-            maxZoom: 20,
+            maxZoom: 21,
             maxNativeZoom: 19,
             attribution:
               'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community',
@@ -272,14 +272,14 @@ export default function Mapa() {
         L.tileLayer(
           'https://services.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}',
           {
-            maxZoom: 20,
+            maxZoom: 21,
             maxNativeZoom: 19,
             opacity: 0.8,
           },
         ).addTo(map)
       } else {
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-          maxZoom: 20,
+          maxZoom: 21,
           maxNativeZoom: 19,
           attribution: '&copy; OpenStreetMap contributors',
         }).addTo(map)

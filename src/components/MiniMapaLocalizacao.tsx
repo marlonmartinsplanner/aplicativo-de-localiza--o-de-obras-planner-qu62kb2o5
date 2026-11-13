@@ -115,11 +115,11 @@ export function MiniMapaLocalizacao({
         attributionControl: false,
         scrollWheelZoom: false,
         doubleClickZoom: true,
-        maxZoom: 20,
+        maxZoom: 21,
         minZoom: 3,
       }).setView(CENTRO_VISAO, 11)
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 20,
+        maxZoom: 21,
         maxNativeZoom: 19,
       }).addTo(map)
       L.control.zoom({ position: 'bottomright' }).addTo(map)
