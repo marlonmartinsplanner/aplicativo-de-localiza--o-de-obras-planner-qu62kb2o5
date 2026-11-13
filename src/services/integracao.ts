@@ -89,7 +89,7 @@ export function montarExportacao(obras: Obra[]): ObraExport[] {
     codigo: o.codigo ?? '',
     nome: o.nome ?? '',
     municipio: o.municipio ?? '',
-    regiao: o.regiao ?? '',
+    regiao: (o.regiao ?? '') as Regiao,
     situacao: o.situacao ?? '',
     avanco: o.avanco ?? 0,
     custo: o.custo ?? 0,

@@ -55,6 +55,8 @@ export async function atualizarObra(
     situacao?: 'Em andamento' | 'Paralisada' | 'Planejada' | 'Concluída'
     avanco?: number
     custo?: number
+    latitude?: number
+    longitude?: number
     engenheiro?: string | null
     atribuido_em?: string | null
     atribuido_por_nome?: string | null
