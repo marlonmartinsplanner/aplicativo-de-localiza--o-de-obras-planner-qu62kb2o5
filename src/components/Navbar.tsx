@@ -10,6 +10,7 @@ import {
   Menu,
   X,
   FileSpreadsheet,
+  Share2,
 } from 'lucide-react'
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
@@ -40,6 +41,7 @@ export function Navbar({ totalObras = 0, atribuidasCount }: NavbarProps) {
     { label: 'Painel', path: '/painel', icon: LayoutDashboard },
     { label: 'Obras', path: '/obras', icon: FileSpreadsheet },
     { label: 'Engenheiros', path: '/engenheiros', icon: Users },
+    { label: 'Integração', path: '/integracao', icon: Share2 },
   ]
 
   const handleLogout = () => {

@@ -11,6 +11,7 @@ import Mapa from '@/pages/Mapa'
 import Painel from '@/pages/Painel'
 import Obras from '@/pages/Obras'
 import Engenheiros from '@/pages/Engenheiros'
+import Integracao from '@/pages/Integracao'
 import NotFound from '@/pages/NotFound'
 
 const App = () => (
@@ -63,6 +64,14 @@ const App = () => (
             element={
               <RotaProtegida>
                 <Engenheiros />
+              </RotaProtegida>
+            }
+          />
+          <Route
+            path="/integracao"
+            element={
+              <RotaProtegida>
+                <Integracao />
               </RotaProtegida>
             }
           />
