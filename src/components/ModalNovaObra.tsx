@@ -20,7 +20,7 @@ import {
 import { Slider } from '@/components/ui/slider'
 import { REGIOES_CONFIG, SITUACOES_CONFIG } from '@/types'
 import type { Obra, Regiao, SituacaoObra } from '@/types'
-import { criarObra } from '@/services/obras'
+import { criarObra, resolverCodigoObra } from '@/services/obras'
 import { MiniMapaLocalizacao } from '@/components/MiniMapaLocalizacao'
 import { regiaoPorQuadrante } from '@/utils/regioes'
 import { useToast } from '@/hooks/use-toast'
@@ -75,11 +75,11 @@ export function ModalNovaObra({
     }
   }, [aberto, codigoSugerido])
 
+  // Campo vazio não é erro: ao salvar, usa a sugestão automática da sequência.
   const erroCodigo = useMemo(() => {
-    const valor = codigo.trim().toUpperCase()
-    if (!valor) return 'Informe o código da obra.'
-    if (valor.length > 20) return 'Código com no máximo 20 caracteres.'
-    const duplicado = codigosExistentes.some((c) => c.trim().toUpperCase() === valor)
+    const valor = codigo.trim().toLowerCase()
+    if (!valor) return null
+    const duplicado = codigosExistentes.some((c) => c.trim().toLowerCase() === valor)
     if (duplicado) return 'Já existe uma obra com este código.'
     return null
   }, [codigo, codigosExistentes])
@@ -114,8 +114,9 @@ export function ModalNovaObra({
 
     setSalvando(true)
     try {
+      const codigoFinal = await resolverCodigoObra(codigo)
       const nova = await criarObra({
-        codigo: codigo.trim().toUpperCase(),
+        codigo: codigoFinal,
         nome: nome.trim(),
         municipio: municipio.trim(),
         regiao,
@@ -133,10 +134,13 @@ export function ModalNovaObra({
       aoFechar()
     } catch (err: unknown) {
       console.error('Erro ao criar obra:', err)
+      const duplicado = err instanceof Error && err.message === 'CODIGO_DUPLICADO'
       toast({
         variant: 'destructive',
-        title: 'Erro ao criar obra',
-        description: 'Não foi possível gravar a nova obra no banco.',
+        title: duplicado ? 'Código inválido' : 'Erro ao criar obra',
+        description: duplicado
+          ? 'Já existe uma obra com este código.'
+          : 'Não foi possível gravar a nova obra no banco.',
       })
     } finally {
       setSalvando(false)
@@ -170,10 +174,16 @@ export function ModalNovaObra({
                 id="codigo-obra"
                 value={codigo}
                 onChange={(e) => setCodigo(e.target.value)}
-                placeholder="OBR-0XX"
+                placeholder={codigoSugerido}
                 className="font-mono"
               />
-              {erroCodigo && <p className="text-[11px] text-planner-red">{erroCodigo}</p>}
+              {erroCodigo ? (
+                <p className="text-[11px] text-planner-red">{erroCodigo}</p>
+              ) : (
+                <p className="text-[11px] text-muted-foreground">
+                  Edite livremente. Vazio ao salvar usa {codigoSugerido}.
+                </p>
+              )}
             </div>
 
             <div className="space-y-1.5">

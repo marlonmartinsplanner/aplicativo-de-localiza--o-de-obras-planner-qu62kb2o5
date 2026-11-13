@@ -20,7 +20,7 @@ import {
 import { Slider } from '@/components/ui/slider'
 import type { Obra, Engenheiro, Regiao, SituacaoObra } from '@/types'
 import { REGIOES_CONFIG, SITUACOES_CONFIG } from '@/types'
-import { atualizarObra, atribuirEngenheiro } from '@/services/obras'
+import { atualizarObra, atribuirEngenheiro, resolverCodigoObra } from '@/services/obras'
 import { MiniMapaLocalizacao } from '@/components/MiniMapaLocalizacao'
 import { CampoEndereco } from '@/components/CampoEndereco'
 import { regiaoPorQuadrante } from '@/utils/regioes'
@@ -46,6 +46,7 @@ export function ModalEdicaoObra({
   const { usuario } = useAuth()
   const { toast } = useToast()
 
+  const [codigo, setCodigo] = useState('')
   const [nome, setNome] = useState('')
   const [municipio, setMunicipio] = useState('')
   const [regiao, setRegiao] = useState<Regiao>('Norte')
@@ -59,6 +60,7 @@ export function ModalEdicaoObra({
 
   useEffect(() => {
     if (obra) {
+      setCodigo(obra.codigo || '')
       setNome(obra.nome || '')
       setMunicipio(obra.municipio || '')
       setRegiao(obra.regiao || 'Norte')
@@ -88,8 +90,12 @@ export function ModalEdicaoObra({
       const engSelecionado = engenheiroId === 'nenhum' ? null : engenheiroId
       const engMudou = engSelecionado !== (obra.engenheiro || null)
 
+      // Código vazio vira a sugestão da sequência; duplicado é recusado antes de gravar
+      const codigoFinal = await resolverCodigoObra(codigo, obra.id)
+
       // Atualiza campos gerais da obra
       let res = await atualizarObra(obra.id, {
+        codigo: codigoFinal,
         nome: nome.trim(),
         municipio: municipio.trim(),
         regiao,
@@ -119,10 +125,13 @@ export function ModalEdicaoObra({
       aoFechar()
     } catch (err: unknown) {
       console.error('Erro ao salvar obra:', err)
+      const duplicado = err instanceof Error && err.message === 'CODIGO_DUPLICADO'
       toast({
         variant: 'destructive',
-        title: 'Erro ao salvar',
-        description: 'Não foi possível persistir as alterações no banco.',
+        title: duplicado ? 'Código inválido' : 'Erro ao salvar',
+        description: duplicado
+          ? 'Já existe outra obra com este código. Escolha outro código.'
+          : 'Não foi possível persistir as alterações no banco.',
       })
     } finally {
       setSalvando(false)
@@ -148,6 +157,22 @@ export function ModalEdicaoObra({
 
         <div className="space-y-4 py-3">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div className="space-y-1.5">
+              <Label htmlFor="codigo-obra" className="text-xs font-semibold">
+                Código da Obra
+              </Label>
+              <Input
+                id="codigo-obra"
+                value={codigo}
+                onChange={(e) => setCodigo(e.target.value)}
+                placeholder={obra.codigo}
+                className="font-mono"
+              />
+              <p className="text-[11px] text-muted-foreground">
+                Vazio ao salvar usa a sugestão automática da sequência.
+              </p>
+            </div>
+
             <div className="space-y-1.5 md:col-span-2">
               <Label htmlFor="nome-obra" className="text-xs font-semibold">
                 Nome do Empreendimento

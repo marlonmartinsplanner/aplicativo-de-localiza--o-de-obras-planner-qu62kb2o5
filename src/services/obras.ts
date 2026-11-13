@@ -46,9 +46,26 @@ export function sugerirProximoCodigo(obras: Obra[]): string {
   return `OBR-${String(maior + 1).padStart(3, '0')}`
 }
 
+/**
+ * Resolve o código digitado para gravar: vazio vira a sugestão da sequência OBR-0XX.
+ * Lança erro se o código já pertence a outra obra (comparação sem diferenciar maiúsculas).
+ * Usa o banco (não a tela) para não depender de lista desatualizada.
+ */
+export async function resolverCodigoObra(digitado: string, idIgnorar?: string): Promise<string> {
+  const todas = await listarObras()
+  const codigo = digitado.trim()
+  if (!codigo) return sugerirProximoCodigo(todas)
+  const emUso = todas.some(
+    (o) => o.id !== idIgnorar && (o.codigo || '').trim().toLowerCase() === codigo.toLowerCase(),
+  )
+  if (emUso) throw new Error('CODIGO_DUPLICADO')
+  return codigo
+}
+
 export async function atualizarObra(
   id: string,
   dados: {
+    codigo?: string
     nome?: string
     municipio?: string
     regiao?: Regiao
