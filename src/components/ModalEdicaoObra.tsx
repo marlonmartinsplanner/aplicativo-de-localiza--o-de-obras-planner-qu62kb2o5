@@ -26,7 +26,8 @@ import { CampoEndereco } from '@/components/CampoEndereco'
 import { regiaoPorQuadrante } from '@/utils/regioes'
 import { useAuth } from '@/contexts/AuthContext'
 import { useToast } from '@/hooks/use-toast'
-import { Building2, UserCheck, Calendar, DollarSign, Percent, MapPin } from 'lucide-react'
+import { Switch } from '@/components/ui/switch'
+import { Building2, UserCheck, Calendar, DollarSign, Percent, MapPin, Truck } from 'lucide-react'
 
 interface ModalEdicaoObraProps {
   obra: Obra | null
@@ -55,6 +56,7 @@ export function ModalEdicaoObra({
   const [situacao, setSituacao] = useState<SituacaoObra>('Em andamento')
   const [avanco, setAvanco] = useState(0)
   const [custo, setCusto] = useState(0)
+  const [terceirizado, setTerceirizado] = useState(false)
   const [engenheiroId, setEngenheiroId] = useState<string>('nenhum')
   const [salvando, setSalvando] = useState(false)
 
@@ -68,6 +70,7 @@ export function ModalEdicaoObra({
       setAvanco(obra.avanco || 0)
       setCusto(obra.custo || 0)
       setEngenheiroId(obra.engenheiro || 'nenhum')
+      setTerceirizado(Boolean(obra.terceirizado))
       setLatitude(obra.latitude ?? null)
       setLongitude(obra.longitude ?? null)
     }
@@ -102,6 +105,7 @@ export function ModalEdicaoObra({
         situacao,
         avanco,
         custo,
+        terceirizado,
         latitude: latitude ?? obra.latitude,
         longitude: longitude ?? obra.longitude,
       })
@@ -273,6 +277,20 @@ export function ModalEdicaoObra({
               step={1}
               onValueChange={(vals) => setAvanco(vals[0])}
             />
+          </div>
+
+          {/* Obra Terceirizada */}
+          <div className="flex items-center justify-between p-3.5 rounded-lg border bg-slate-50 dark:bg-slate-900/50">
+            <div className="flex items-center gap-2">
+              <Truck className="w-4 h-4 text-planner-red" />
+              <div>
+                <Label className="text-xs font-semibold">Terceirizado</Label>
+                <p className="text-[11px] text-muted-foreground">
+                  Marque se a execução desta obra é feita por empresa terceirizada.
+                </p>
+              </div>
+            </div>
+            <Switch checked={terceirizado} onCheckedChange={setTerceirizado} />
           </div>
 
           {/* Mini-mapa: localização da obra + sugestão automática de região pelo quadrante */}

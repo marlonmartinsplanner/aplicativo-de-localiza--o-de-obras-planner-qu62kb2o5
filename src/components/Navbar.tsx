@@ -1,4 +1,4 @@
-import { Home, MapPin, LayoutDashboard, Users, LogOut, Building2, Menu, X } from 'lucide-react'
+import { MapPin, LayoutDashboard, Users, LogOut, Building2, Menu, X } from 'lucide-react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { useRef, useState } from 'react'
@@ -22,7 +22,6 @@ export function Navbar({ totalObras, atribuidasCount }: NavbarProps) {
   const inputFotoRef = useRef<HTMLInputElement>(null)
 
   const navItems = [
-    { label: 'Início', path: '/', icon: Home },
     { label: 'Mapa', path: '/mapa', icon: MapPin },
     { label: 'Painel', path: '/painel', icon: LayoutDashboard },
     { label: 'Obras', path: '/obras', icon: Building2 },

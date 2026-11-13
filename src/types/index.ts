@@ -23,6 +23,7 @@ export interface Obra {
   custo: number
   latitude: number
   longitude: number
+  terceirizado?: boolean
   engenheiro?: string
   atribuido_em?: string
   atribuido_por_nome?: string

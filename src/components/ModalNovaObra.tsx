@@ -31,7 +31,9 @@ import {
   MapPin,
   MousePointerClick,
   LocateFixed,
+  Truck,
 } from 'lucide-react'
+import { Switch } from '@/components/ui/switch'
 
 interface ModalNovaObraProps {
   aberto: boolean
@@ -59,6 +61,7 @@ export function ModalNovaObra({
   const [custo, setCusto] = useState(0)
   const [latitude, setLatitude] = useState<number | null>(null)
   const [longitude, setLongitude] = useState<number | null>(null)
+  const [terceirizado, setTerceirizado] = useState(false)
   const [salvando, setSalvando] = useState(false)
 
   useEffect(() => {
@@ -72,6 +75,7 @@ export function ModalNovaObra({
       setCusto(0)
       setLatitude(null)
       setLongitude(null)
+      setTerceirizado(false)
     }
   }, [aberto, codigoSugerido])
 
@@ -125,6 +129,7 @@ export function ModalNovaObra({
         custo,
         latitude,
         longitude,
+        terceirizado,
       })
       toast({
         title: 'Obra criada',
@@ -266,6 +271,20 @@ export function ModalNovaObra({
                 )}
               </span>
             </div>
+          </div>
+
+          {/* Obra Terceirizada */}
+          <div className="flex items-center justify-between p-3.5 rounded-lg border bg-slate-50 dark:bg-slate-900/50">
+            <div className="flex items-center gap-2">
+              <Truck className="w-4 h-4 text-planner-red" />
+              <div>
+                <Label className="text-xs font-semibold">Terceirizado</Label>
+                <p className="text-[11px] text-muted-foreground">
+                  Marque se a execução desta obra é feita por empresa terceirizada.
+                </p>
+              </div>
+            </div>
+            <Switch checked={terceirizado} onCheckedChange={setTerceirizado} />
           </div>
 
           {/* Slider de Avanço Físico */}

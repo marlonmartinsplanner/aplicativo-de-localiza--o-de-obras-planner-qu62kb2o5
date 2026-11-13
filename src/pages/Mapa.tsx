@@ -224,6 +224,12 @@ export default function Mapa() {
         const map = L.map(mapaRef.current, {
           zoomControl: false,
           attributionControl: false,
+          scrollWheelZoom: true,
+          doubleClickZoom: true,
+          maxZoom: 20,
+          minZoom: 4,
+          maxBounds: L.latLngBounds([-25, -55], [-8, -38]),
+          maxBoundsViscosity: 0.5,
         }).setView([SEDE.lat, SEDE.lng], 10)
 
         L.control.zoom({ position: 'bottomright' }).addTo(map)
@@ -255,7 +261,8 @@ export default function Mapa() {
         L.tileLayer(
           'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
           {
-            maxZoom: 19,
+            maxZoom: 20,
+            maxNativeZoom: 19,
             attribution:
               'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community',
           },
@@ -265,13 +272,15 @@ export default function Mapa() {
         L.tileLayer(
           'https://services.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}',
           {
-            maxZoom: 19,
+            maxZoom: 20,
+            maxNativeZoom: 19,
             opacity: 0.8,
           },
         ).addTo(map)
       } else {
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-          maxZoom: 19,
+          maxZoom: 20,
+          maxNativeZoom: 19,
           attribution: '&copy; OpenStreetMap contributors',
         }).addTo(map)
       }
@@ -422,7 +431,7 @@ export default function Mapa() {
 
   const centralizarNoPonto = (lat: number, lon: number) => {
     if (leafletMapRef.current) {
-      leafletMapRef.current.flyTo([lat, lon], 12, { duration: 1.2 })
+      leafletMapRef.current.flyTo([lat, lon], 18, { duration: 1.2 })
     }
   }
 

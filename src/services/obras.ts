@@ -26,6 +26,7 @@ export async function criarObra(dados: {
   custo: number
   latitude: number
   longitude: number
+  terceirizado?: boolean
 }): Promise<Obra> {
   const created = await pb.collection('obras').create<Obra>(dados, {
     expand: 'engenheiro',
@@ -74,6 +75,7 @@ export async function atualizarObra(
     custo?: number
     latitude?: number
     longitude?: number
+    terceirizado?: boolean
     engenheiro?: string | null
     atribuido_em?: string | null
     atribuido_por_nome?: string | null

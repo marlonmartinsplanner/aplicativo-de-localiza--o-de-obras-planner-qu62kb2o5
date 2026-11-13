@@ -111,8 +111,18 @@ export function MiniMapaLocalizacao({
       const L = (window as any).L
       if (!L) return
 
-      const map = L.map(divRef.current, { attributionControl: false }).setView(CENTRO_VISAO, 11)
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 }).addTo(map)
+      const map = L.map(divRef.current, {
+        attributionControl: false,
+        scrollWheelZoom: false,
+        doubleClickZoom: true,
+        maxZoom: 20,
+        minZoom: 3,
+      }).setView(CENTRO_VISAO, 11)
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 20,
+        maxNativeZoom: 19,
+      }).addTo(map)
+      L.control.zoom({ position: 'bottomright' }).addTo(map)
       map.on('click', (e: any) => {
         aoSelecionarRef.current(e.latlng.lat, e.latlng.lng)
       })
@@ -175,7 +185,7 @@ export function MiniMapaLocalizacao({
           iconAnchor: [14, 33],
         }),
       }).addTo(mapRef.current)
-      mapRef.current.setView([latitude, longitude], Math.max(mapRef.current.getZoom(), 10))
+      mapRef.current.setView([latitude, longitude], Math.max(mapRef.current.getZoom(), 16))
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [latitude, longitude, regiao])

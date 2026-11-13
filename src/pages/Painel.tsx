@@ -35,6 +35,7 @@ import {
 import { Link } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { PainelEngenheiros } from '@/components/PainelEngenheiros'
+import { PainelTerceirizados } from '@/components/PainelTerceirizados'
 
 export default function Painel() {
   const [obras, setObras] = useState<Obra[]>([])
@@ -215,6 +216,27 @@ export default function Painel() {
             </CardContent>
           </Card>
 
+          {/* Planejadas — quantidade e valor somado, ao lado de "Em Andamento" */}
+          <Card className="border-slate-200 dark:border-slate-800 shadow-xs">
+            <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
+              <CardTitle className="text-xs font-medium text-slate-500">Planejadas</CardTitle>
+              <div className="p-2 rounded-lg bg-sky-50 dark:bg-sky-950 text-sky-600">
+                <ClipboardList className="w-4 h-4" />
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-slate-900 dark:text-white">
+                {metricas.planejadas}
+              </div>
+              <p className="text-[11px] text-slate-500 mt-1">
+                Valor somado:{' '}
+                <strong className="text-slate-800 dark:text-slate-200">
+                  {formatarMoeda(metricas.valorPlanejadas)}
+                </strong>
+              </p>
+            </CardContent>
+          </Card>
+
           {/* Obras Paralisadas (Atenção Crítica) */}
           <Card className="border-slate-200 dark:border-slate-800 shadow-xs">
             <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
@@ -265,27 +287,6 @@ export default function Painel() {
               </div>
               <p className="text-[11px] text-slate-500 mt-1">
                 Valor restante de todas as obras pelo avanço físico (custo × falta %)
-              </p>
-            </CardContent>
-          </Card>
-
-          {/* Obras Planejadas — quantidade e valor somado */}
-          <Card className="border-slate-200 dark:border-slate-800 shadow-xs">
-            <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-              <CardTitle className="text-xs font-medium text-slate-500">Obras Planejadas</CardTitle>
-              <div className="p-2 rounded-lg bg-sky-50 dark:bg-sky-950 text-sky-600">
-                <ClipboardList className="w-4 h-4" />
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-slate-900 dark:text-white">
-                {metricas.planejadas}
-              </div>
-              <p className="text-[11px] text-slate-500 mt-1">
-                Valor somado:{' '}
-                <strong className="text-slate-800 dark:text-slate-200">
-                  {formatarMoeda(metricas.valorPlanejadas)}
-                </strong>
               </p>
             </CardContent>
           </Card>
@@ -453,8 +454,11 @@ export default function Painel() {
           </Card>
         </div>
 
-        {/* Painel de Engenheiros e Carga de Trabalho */}
-        <PainelEngenheiros obras={obras} engenheiros={engenheiros} />
+        {/* Painel de Engenheiros e Carga de Trabalho + Terceirizados, lado a lado em telas largas */}
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 items-start">
+          <PainelEngenheiros obras={obras} engenheiros={engenheiros} />
+          <PainelTerceirizados obras={obras} />
+        </div>
 
         {/* Resumo Rápido para a Diretoria / Reunião */}
         <Card className="border-planner-blue/30 dark:border-planner-blue/40 bg-planner-blue/5 dark:bg-planner-blue/10">

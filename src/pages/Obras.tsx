@@ -427,7 +427,17 @@ export default function Obras() {
                       className="hover:bg-slate-50/80 dark:hover:bg-slate-800/50"
                     >
                       <TableCell className="font-mono font-semibold text-xs text-slate-600 dark:text-slate-400">
-                        {obra.codigo}
+                        <div className="flex items-center gap-1.5">
+                          {obra.codigo}
+                          {obra.terceirizado && (
+                            <span
+                              className="inline-flex items-center gap-0.5 rounded px-1 py-px text-[9px] font-bold uppercase tracking-wide bg-planner-red/10 text-planner-red border border-planner-red/30"
+                              title="Obra terceirizada"
+                            >
+                              Terceirizado
+                            </span>
+                          )}
+                        </div>
                       </TableCell>
 
                       <TableCell className="font-medium text-xs text-slate-900 dark:text-white max-w-[260px]">
