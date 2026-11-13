@@ -32,6 +32,7 @@ import {
 } from 'recharts'
 import { Link } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
+import { PainelEngenheiros } from '@/components/PainelEngenheiros'
 
 export default function Painel() {
   const [obras, setObras] = useState<Obra[]>([])
@@ -397,6 +398,9 @@ export default function Painel() {
             </CardContent>
           </Card>
         </div>
+
+        {/* Painel de Engenheiros e Carga de Trabalho */}
+        <PainelEngenheiros obras={obras} engenheiros={engenheiros} />
 
         {/* Resumo Rápido para a Diretoria / Reunião */}
         <Card className="border-planner-blue/30 dark:border-planner-blue/40 bg-planner-blue/5 dark:bg-planner-blue/10">
