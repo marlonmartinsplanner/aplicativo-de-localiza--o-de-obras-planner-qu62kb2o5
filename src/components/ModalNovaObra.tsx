@@ -21,6 +21,8 @@ import { Slider } from '@/components/ui/slider'
 import { REGIOES_CONFIG, SITUACOES_CONFIG } from '@/types'
 import type { Obra, Regiao, SituacaoObra } from '@/types'
 import { criarObra } from '@/services/obras'
+import { MiniMapaLocalizacao } from '@/components/MiniMapaLocalizacao'
+import { regiaoPorQuadrante } from '@/utils/regioes'
 import { useToast } from '@/hooks/use-toast'
 import {
   Building2,
@@ -31,162 +33,12 @@ import {
   LocateFixed,
 } from 'lucide-react'
 
-// Coordenadas aproximadas do centro do estado de São Paulo
-const CENTRO_SP: [number, number] = [-22.5, -48.5]
-
-// Mesmo visual de pin do Mapa (círculo colorido pela região, com bico)
-function htmlPin(regiao: Regiao): string {
-  const cor = REGIOES_CONFIG[regiao].hex
-  return `
-    <div style="
-      position: relative;
-      width: 28px;
-      height: 28px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: ${cor};
-      border: 2px solid #ffffff;
-      border-radius: 50%;
-      box-shadow: 0 3px 8px rgba(0,0,0,0.35);
-    ">
-      <span style="color: white; font-size: 10px; font-weight: 700;">${regiao}</span>
-      <div style="
-        position: absolute;
-        bottom: -5px;
-        width: 0;
-        height: 0;
-        border-left: 4px solid transparent;
-        border-right: 4px solid transparent;
-        border-top: 5px solid ${cor};
-      "></div>
-    </div>
-  `
-}
-
 interface ModalNovaObraProps {
   aberto: boolean
   codigoSugerido: string
   codigosExistentes: string[]
   aoFechar: () => void
   aoSalvar: (novaObra: Obra) => void
-}
-
-/**
- * Mini-mapa de captura de coordenadas: usa Leaflet via CDN (mesmo padrão da
- * tela Mapa) e devolve lat/lng no clique. Um marcador acompanha o ponto.
- */
-function MiniMapa({
-  latitude,
-  longitude,
-  regiao,
-  aoSelecionar,
-}: {
-  latitude: number | null
-  longitude: number | null
-  regiao: Regiao
-  aoSelecionar: (lat: number, lng: number) => void
-}) {
-  const divRef = useRef<HTMLDivElement>(null)
-  const mapRef = useRef<any>(null)
-  const markerRef = useRef<any>(null)
-  const aoSelecionarRef = useRef(aoSelecionar)
-  aoSelecionarRef.current = aoSelecionar
-
-  useEffect(() => {
-    let cancelado = false
-
-    const garantirCss = () => {
-      if (document.querySelector('link[data-leaflet-css]')) return
-      const link = document.createElement('link')
-      link.rel = 'stylesheet'
-      link.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css'
-      link.setAttribute('data-leaflet-css', '1')
-      document.head.appendChild(link)
-    }
-
-    const init = () => {
-      if (cancelado || mapRef.current || !divRef.current) return
-      const L = (window as any).L
-      if (!L) return
-
-      const map = L.map(divRef.current, { attributionControl: false }).setView(CENTRO_SP, 6)
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 }).addTo(map)
-      map.on('click', (e: any) => {
-        aoSelecionarRef.current(e.latlng.lat, e.latlng.lng)
-      })
-      mapRef.current = map
-      // O Dialog anima na abertura: o container pode estar 0x0 no init
-      setTimeout(() => mapRef.current?.invalidateSize(), 200)
-    }
-
-    const atualizarMarcador = () => {
-      const L = (window as any).L
-      if (!L || !mapRef.current) return
-      if (markerRef.current) {
-        markerRef.current.remove()
-        markerRef.current = null
-      }
-      if (latitude !== null && longitude !== null) {
-        markerRef.current = L.marker([latitude, longitude], {
-          icon: L.divIcon({
-            className: 'custom-leaflet-pin',
-            html: htmlPin(regiao),
-            iconSize: [28, 28],
-            iconAnchor: [14, 33],
-          }),
-        }).addTo(mapRef.current)
-        mapRef.current.setView([latitude, longitude], Math.max(mapRef.current.getZoom(), 10))
-      }
-    }
-
-    if ((window as any).L) {
-      garantirCss()
-      init()
-    } else {
-      garantirCss()
-      const script = document.createElement('script')
-      script.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js'
-      script.onload = () => {
-        if (!cancelado) init()
-      }
-      document.body.appendChild(script)
-    }
-
-    return () => {
-      cancelado = true
-      if (mapRef.current) {
-        mapRef.current.remove()
-        mapRef.current = null
-        markerRef.current = null
-      }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
-  // Marcador acompanha lat/lng (clique no mapa ou digitação nos campos)
-  useEffect(() => {
-    const L = (window as any).L
-    if (!L || !mapRef.current) return
-    if (markerRef.current) {
-      markerRef.current.remove()
-      markerRef.current = null
-    }
-    if (latitude !== null && longitude !== null) {
-      markerRef.current = L.marker([latitude, longitude], {
-        icon: L.divIcon({
-          className: 'custom-leaflet-pin',
-          html: htmlPin(regiao),
-          iconSize: [28, 28],
-          iconAnchor: [14, 33],
-        }),
-      }).addTo(mapRef.current)
-      mapRef.current.setView([latitude, longitude], Math.max(mapRef.current.getZoom(), 10))
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [latitude, longitude, regiao])
-
-  return <div ref={divRef} className="h-44 w-full rounded-md z-0" />
 }
 
 export function ModalNovaObra({
@@ -201,7 +53,7 @@ export function ModalNovaObra({
   const [codigo, setCodigo] = useState('')
   const [nome, setNome] = useState('')
   const [municipio, setMunicipio] = useState('')
-  const [regiao, setRegiao] = useState<Regiao>('R1')
+  const [regiao, setRegiao] = useState<Regiao>('Norte')
   const [situacao, setSituacao] = useState<SituacaoObra>('Planejada')
   const [avanco, setAvanco] = useState(0)
   const [custo, setCusto] = useState(0)
@@ -214,7 +66,7 @@ export function ModalNovaObra({
       setCodigo(codigoSugerido)
       setNome('')
       setMunicipio('')
-      setRegiao('R1')
+      setRegiao('Norte')
       setSituacao('Planejada')
       setAvanco(0)
       setCusto(0)
@@ -357,10 +209,11 @@ export function ModalNovaObra({
                   <SelectValue placeholder="Selecione a região" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="R1">R1 - Metropolitana / Capital</SelectItem>
-                  <SelectItem value="R2">R2 - Campinas e Centro</SelectItem>
-                  <SelectItem value="R3">R3 - Vale do Paraíba / Litoral</SelectItem>
-                  <SelectItem value="R4">R4 - Ribeirão Preto / Noroeste</SelectItem>
+                  {(['Norte', 'Sul', 'Leste', 'Oeste'] as Regiao[]).map((r) => (
+                    <SelectItem key={r} value={r}>
+                      {r} - {REGIOES_CONFIG[r].nome}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
@@ -475,16 +328,27 @@ export function ModalNovaObra({
             </div>
 
             <div className="h-44 rounded-md overflow-hidden border border-slate-200 dark:border-slate-700">
-              <MiniMapa
+              <MiniMapaLocalizacao
                 latitude={latitude}
                 longitude={longitude}
                 regiao={regiao}
                 aoSelecionar={(lat, lng) => {
-                  setLatitude(Number(lat.toFixed(6)))
-                  setLongitude(Number(lng.toFixed(6)))
+                  const nLat = Number(lat.toFixed(6))
+                  const nLng = Number(lng.toFixed(6))
+                  setLatitude(nLat)
+                  setLongitude(nLng)
+                  const sugerida = regiaoPorQuadrante(nLat, nLng)
+                  if (sugerida) setRegiao(sugerida)
                 }}
               />
             </div>
+            <p className="text-[11px] text-slate-500 dark:text-slate-400">
+              Região sugerida pelo quadrante em relação à Sede:{' '}
+              <strong className="text-planner-blue-dark dark:text-planner-blue-light">
+                {regiao}
+              </strong>{' '}
+              (ajustável manualmente no seletor acima)
+            </p>
 
             <div className="flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400">
               <span>

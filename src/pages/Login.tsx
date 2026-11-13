@@ -258,7 +258,7 @@ export default function Login() {
 
           <p className="text-center text-xs text-slate-500 mt-6">
             Construtora Planner Engenharia &copy; {new Date().getFullYear()} &bull; Gestão de Obras
-            R1–R4
+            por Região
           </p>
         </div>
       </div>

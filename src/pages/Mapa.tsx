@@ -5,6 +5,39 @@ import { listarEngenheiros } from '@/services/engenheiros'
 import type { Obra, Engenheiro, Regiao, SituacaoObra } from '@/types'
 import { REGIOES_CONFIG, SITUACOES_CONFIG } from '@/types'
 import { ModalEdicaoObra } from '@/components/ModalEdicaoObra'
+import { SEDE } from '@/utils/regioes'
+
+// Marcador FIXO da Sede da Empresa — sempre visível, não clicável, não filtrável
+function htmlPinSede(): string {
+  return `
+    <div style="position: relative; display: flex; flex-direction: column; align-items: center;">
+      <div style="
+        width: 34px;
+        height: 34px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #0f172a;
+        border: 3px solid #f8fafc;
+        border-radius: 50% 50% 50% 0;
+        transform: rotate(-45deg);
+        box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+      ">
+        <span style="transform: rotate(45deg); color: #facc15; font-size: 14px;">★</span>
+      </div>
+      <div style="
+        margin-top: 4px;
+        background: #0f172a;
+        color: #facc15;
+        font-size: 9px;
+        font-weight: 700;
+        padding: 2px 6px;
+        border-radius: 4px;
+        white-space: nowrap;
+      ">Sede da Empresa</div>
+    </div>
+  `
+}
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import {
@@ -187,13 +220,22 @@ export default function Mapa() {
       if (!L || !mapaRef.current) return
 
       if (!leafletMapRef.current) {
-        // Centro do Estado de São Paulo
+        // Centro: Sede da Empresa (Sete Lagoas - MG), origem das regiões
         const map = L.map(mapaRef.current, {
           zoomControl: false,
           attributionControl: false,
-        }).setView([-22.8, -47.2], 7)
+        }).setView([SEDE.lat, SEDE.lng], 10)
 
         L.control.zoom({ position: 'bottomright' }).addTo(map)
+
+        // Marcador FIXO da Sede da Empresa — sempre visível, não filtrável
+        const iconeSede = L.divIcon({
+          className: 'custom-leaflet-pin',
+          html: htmlPinSede(),
+          iconSize: [34, 34],
+          iconAnchor: [17, 40],
+        })
+        L.marker([SEDE.lat, SEDE.lng], { icon: iconeSede, interactive: false }).addTo(map)
 
         leafletMapRef.current = map
         markersLayerRef.current = L.layerGroup().addTo(map)
@@ -436,10 +478,11 @@ export default function Mapa() {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="todas">Todas Regiões</SelectItem>
-                <SelectItem value="R1">R1 - Metrópole</SelectItem>
-                <SelectItem value="R2">R2 - Campinas</SelectItem>
-                <SelectItem value="R3">R3 - Vale/Litoral</SelectItem>
-                <SelectItem value="R4">R4 - Ribeirão</SelectItem>
+                {(['Norte', 'Sul', 'Leste', 'Oeste'] as Regiao[]).map((r) => (
+                  <SelectItem key={r} value={r}>
+                    {r} - {REGIOES_CONFIG[r].nome}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
 
@@ -529,7 +572,7 @@ export default function Mapa() {
         {/* Legenda de Regiões */}
         <div className="max-w-7xl mx-auto flex flex-wrap items-center gap-3 pt-2 text-[11px] text-slate-600 dark:text-slate-400">
           <span className="font-semibold text-slate-700 dark:text-slate-300">Regiões:</span>
-          {(['R1', 'R2', 'R3', 'R4'] as Regiao[]).map((r) => {
+          {(['Norte', 'Sul', 'Leste', 'Oeste'] as Regiao[]).map((r) => {
             const conf = REGIOES_CONFIG[r]
             const qtd = obrasFiltradas.filter((o) => o.regiao === r).length
             return (
@@ -539,12 +582,17 @@ export default function Mapa() {
                   style={{ backgroundColor: conf.hex }}
                 />
                 <span className="font-medium text-slate-800 dark:text-slate-200">{r}:</span>
-                <span className="text-slate-500">
-                  {conf.nome.split(' - ')[1]} ({qtd})
-                </span>
+                <span className="text-slate-500">({qtd})</span>
               </div>
             )
           })}
+
+          {/* A Sede é fixa e não faz parte dos filtros — só legenda */}
+          <div className="flex items-center gap-1.5">
+            <span className="text-[13px] leading-none">★</span>
+            <span className="font-medium text-slate-800 dark:text-slate-200">Sede:</span>
+            <span className="text-slate-500">marcador fixo (não filtrável)</span>
+          </div>
 
           <div className="flex items-center gap-1 ml-auto text-amber-600 dark:text-amber-400 font-medium">
             <AlertTriangle className="w-3.5 h-3.5" />
@@ -566,8 +614,8 @@ export default function Mapa() {
               <p className="font-bold">Atenção: Coordenada compartilhada entre regiões</p>
               <p className="text-[11px] mt-0.5 leading-snug">
                 Detectamos obras registradas nas mesmas coordenadas geográficas pertencentes a
-                regiões diferentes (ex: R1 e R2 no Trecho Caieiras/Franco da Rocha). O pin no mapa
-                destaca esse conflito para conferência.
+                regiões diferentes (ex: Norte e Sul no mesmo ponto). O pin no mapa destaca esse
+                conflito para conferência.
               </p>
             </div>
           </div>
@@ -625,7 +673,7 @@ export default function Mapa() {
                         {r}
                       </strong>
                     ))}
-                    . A cor do marcador não foi arbitrada pela R1.
+                    . A cor do marcador segue a primeira obra do ponto.
                   </p>
                 </div>
               </div>

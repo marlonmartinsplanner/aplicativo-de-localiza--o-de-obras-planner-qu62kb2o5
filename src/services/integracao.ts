@@ -1,5 +1,5 @@
 import pb from '@/lib/pocketbase/client'
-import type { Obra, Engenheiro } from '@/types'
+import type { Obra, Engenheiro, Regiao } from '@/types'
 
 export interface IntegracaoConfig {
   id: string
@@ -72,7 +72,7 @@ export interface ObraExport {
   codigo: string
   nome: string
   municipio: string
-  regiao: string
+  regiao: Regiao
   situacao: string
   avanco: number
   custo: number

@@ -51,7 +51,7 @@ export async function atualizarObra(
   dados: {
     nome?: string
     municipio?: string
-    regiao?: 'R1' | 'R2' | 'R3' | 'R4'
+    regiao?: Regiao
     situacao?: 'Em andamento' | 'Paralisada' | 'Planejada' | 'Concluída'
     avanco?: number
     custo?: number

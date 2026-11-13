@@ -21,9 +21,11 @@ import { Slider } from '@/components/ui/slider'
 import type { Obra, Engenheiro, Regiao, SituacaoObra } from '@/types'
 import { REGIOES_CONFIG, SITUACOES_CONFIG } from '@/types'
 import { atualizarObra, atribuirEngenheiro } from '@/services/obras'
+import { MiniMapaLocalizacao } from '@/components/MiniMapaLocalizacao'
+import { regiaoPorQuadrante } from '@/utils/regioes'
 import { useAuth } from '@/contexts/AuthContext'
 import { useToast } from '@/hooks/use-toast'
-import { Building2, UserCheck, Calendar, DollarSign, Percent } from 'lucide-react'
+import { Building2, UserCheck, Calendar, DollarSign, Percent, MapPin } from 'lucide-react'
 
 interface ModalEdicaoObraProps {
   obra: Obra | null
@@ -45,7 +47,9 @@ export function ModalEdicaoObra({
 
   const [nome, setNome] = useState('')
   const [municipio, setMunicipio] = useState('')
-  const [regiao, setRegiao] = useState<Regiao>('R1')
+  const [regiao, setRegiao] = useState<Regiao>('Norte')
+  const [latitude, setLatitude] = useState<number | null>(null)
+  const [longitude, setLongitude] = useState<number | null>(null)
   const [situacao, setSituacao] = useState<SituacaoObra>('Em andamento')
   const [avanco, setAvanco] = useState(0)
   const [custo, setCusto] = useState(0)
@@ -56,11 +60,13 @@ export function ModalEdicaoObra({
     if (obra) {
       setNome(obra.nome || '')
       setMunicipio(obra.municipio || '')
-      setRegiao(obra.regiao || 'R1')
+      setRegiao(obra.regiao || 'Norte')
       setSituacao(obra.situacao || 'Em andamento')
       setAvanco(obra.avanco || 0)
       setCusto(obra.custo || 0)
       setEngenheiroId(obra.engenheiro || 'nenhum')
+      setLatitude(obra.latitude ?? null)
+      setLongitude(obra.longitude ?? null)
     }
   }, [obra])
 
@@ -89,6 +95,8 @@ export function ModalEdicaoObra({
         situacao,
         avanco,
         custo,
+        latitude: latitude ?? obra.latitude,
+        longitude: longitude ?? obra.longitude,
       })
 
       // Se o engenheiro foi alterado, usa atribuirEngenheiro que grava histórico e carimbo
@@ -172,10 +180,11 @@ export function ModalEdicaoObra({
                   <SelectValue placeholder="Selecione a região" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="R1">R1 - Metropolitana / Capital</SelectItem>
-                  <SelectItem value="R2">R2 - Campinas e Centro</SelectItem>
-                  <SelectItem value="R3">R3 - Vale do Paraíba / Litoral</SelectItem>
-                  <SelectItem value="R4">R4 - Ribeirão Preto / Noroeste</SelectItem>
+                  {(['Norte', 'Sul', 'Leste', 'Oeste'] as Regiao[]).map((r) => (
+                    <SelectItem key={r} value={r}>
+                      {r} - {REGIOES_CONFIG[r].nome}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
@@ -238,6 +247,37 @@ export function ModalEdicaoObra({
               step={1}
               onValueChange={(vals) => setAvanco(vals[0])}
             />
+          </div>
+
+          {/* Mini-mapa: localização da obra + sugestão automática de região pelo quadrante */}
+          <div className="p-3.5 rounded-lg border bg-slate-50 dark:bg-slate-900/50 space-y-2.5">
+            <div className="flex items-center justify-between gap-2">
+              <Label className="text-xs font-semibold flex items-center gap-1">
+                <MapPin className="w-3.5 h-3.5 text-planner-blue" />
+                Localização da Obra
+              </Label>
+              <span className="text-[11px] text-muted-foreground">
+                Clique no mapa para marcar — a região é sugerida pelo quadrante em relação à Sede
+              </span>
+            </div>
+            <MiniMapaLocalizacao
+              latitude={latitude}
+              longitude={longitude}
+              regiao={regiao}
+              aoSelecionar={(lat, lng) => {
+                setLatitude(lat)
+                setLongitude(lng)
+                const sugerida = regiaoPorQuadrante(lat, lng)
+                if (sugerida) setRegiao(sugerida)
+              }}
+            />
+            <p className="text-[11px] text-slate-500 dark:text-slate-400">
+              Região sugerida:{' '}
+              <strong className="text-planner-blue-dark dark:text-planner-blue-light">
+                {regiao}
+              </strong>{' '}
+              (ajustável manualmente no seletor acima)
+            </p>
           </div>
 
           {/* Atribuição de Engenheiro */}

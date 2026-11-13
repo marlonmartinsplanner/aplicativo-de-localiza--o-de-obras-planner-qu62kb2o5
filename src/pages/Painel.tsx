@@ -78,9 +78,9 @@ export default function Painel() {
     }
   }, [obras])
 
-  // Dados para Gráfico por Região (Quantidade e Custo)
+  // Dados para Gráfico por Região (Quantidade e Custo) — quadrantes em torno da Sede
   const dadosPorRegiao = useMemo(() => {
-    const regioes: Regiao[] = ['R1', 'R2', 'R3', 'R4']
+    const regioes: Regiao[] = ['Norte', 'Sul', 'Leste', 'Oeste']
     return regioes.map((reg) => {
       const obrasReg = obras.filter((o) => o.regiao === reg)
       const custoReg = obrasReg.reduce((acc, o) => acc + (o.custo || 0), 0)
@@ -88,7 +88,7 @@ export default function Painel() {
 
       return {
         regiao: reg,
-        nome: REGIOES_CONFIG[reg].nome.split(' - ')[1],
+        nome: REGIOES_CONFIG[reg].nome,
         total: obrasReg.length,
         atribuidas,
         pendentes: obrasReg.length - atribuidas,
@@ -230,7 +230,7 @@ export default function Painel() {
                 {formatarMoeda(metricas.custoTotal)}
               </div>
               <p className="text-[11px] text-slate-500 mt-1">
-                {metricas.total} obras distribuídas em R1, R2, R3 e R4
+                {metricas.total} obras distribuídas em Norte, Sul, Leste e Oeste da Sede
               </p>
             </CardContent>
           </Card>
@@ -244,14 +244,14 @@ export default function Painel() {
               <CardTitle className="text-sm font-semibold flex items-center justify-between">
                 <span className="flex items-center gap-2">
                   <BarChart3 className="w-4 h-4 text-planner-blue" />
-                  Obras e Carga por Região (R1–R4)
+                  Obras e Carga por Região (Norte/Sul/Leste/Oeste)
                 </span>
                 <span className="text-xs font-normal text-muted-foreground">
                   Obras atribuídas vs pendentes
                 </span>
               </CardTitle>
               <CardDescription className="text-xs">
-                Distribuição das {metricas.total} obras pelas 4 macrorregiões do estado
+                Quadrantes em torno da Sede da Empresa (Sete Lagoas - MG) — {metricas.total} obras
               </CardDescription>
             </CardHeader>
             <CardContent className="pt-4">

@@ -82,11 +82,11 @@ export default function Engenheiros() {
           ? Math.round(obrasDoEng.reduce((acc, o) => acc + (o.avanco || 0), 0) / qtdObras)
           : 0
 
-      // Distribuição por região
-      const r1 = obrasDoEng.filter((o) => o.regiao === 'R1').length
-      const r2 = obrasDoEng.filter((o) => o.regiao === 'R2').length
-      const r3 = obrasDoEng.filter((o) => o.regiao === 'R3').length
-      const r4 = obrasDoEng.filter((o) => o.regiao === 'R4').length
+      // Distribuição por região (quadrantes em torno da Sede)
+      const norte = obrasDoEng.filter((o) => o.regiao === 'Norte').length
+      const sul = obrasDoEng.filter((o) => o.regiao === 'Sul').length
+      const leste = obrasDoEng.filter((o) => o.regiao === 'Leste').length
+      const oeste = obrasDoEng.filter((o) => o.regiao === 'Oeste').length
 
       return {
         ...eng,
@@ -94,7 +94,7 @@ export default function Engenheiros() {
         qtdObras,
         custoTotal,
         avancoMedio,
-        distribuicao: { r1, r2, r3, r4 },
+        distribuicao: { norte, sul, leste, oeste },
       }
     })
   }, [engenheiros, obras])
@@ -309,20 +309,20 @@ export default function Engenheiros() {
                   </span>
                   <div className="grid grid-cols-4 gap-1 text-center text-xs">
                     <div className="p-1 rounded bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-900">
-                      <span className="font-bold text-blue-600">R1</span>
-                      <p className="text-[11px] font-semibold">{eng.distribuicao.r1}</p>
+                      <span className="font-bold text-blue-600">Norte</span>
+                      <p className="text-[11px] font-semibold">{eng.distribuicao.norte}</p>
                     </div>
                     <div className="p-1 rounded bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-900">
-                      <span className="font-bold text-emerald-600">R2</span>
-                      <p className="text-[11px] font-semibold">{eng.distribuicao.r2}</p>
+                      <span className="font-bold text-emerald-600">Sul</span>
+                      <p className="text-[11px] font-semibold">{eng.distribuicao.sul}</p>
                     </div>
                     <div className="p-1 rounded bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-900">
-                      <span className="font-bold text-amber-600">R3</span>
-                      <p className="text-[11px] font-semibold">{eng.distribuicao.r3}</p>
+                      <span className="font-bold text-amber-600">Leste</span>
+                      <p className="text-[11px] font-semibold">{eng.distribuicao.leste}</p>
                     </div>
                     <div className="p-1 rounded bg-violet-50 dark:bg-violet-950/40 border border-violet-200 dark:border-violet-900">
-                      <span className="font-bold text-violet-600">R4</span>
-                      <p className="text-[11px] font-semibold">{eng.distribuicao.r4}</p>
+                      <span className="font-bold text-violet-600">Oeste</span>
+                      <p className="text-[11px] font-semibold">{eng.distribuicao.oeste}</p>
                     </div>
                   </div>
                 </div>

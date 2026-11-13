@@ -282,10 +282,11 @@ export default function Obras() {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="todas">Todas Regiões</SelectItem>
-                <SelectItem value="R1">R1 - Metropolitana</SelectItem>
-                <SelectItem value="R2">R2 - Campinas</SelectItem>
-                <SelectItem value="R3">R3 - Vale/Litoral</SelectItem>
-                <SelectItem value="R4">R4 - Ribeirão</SelectItem>
+                {(['Norte', 'Sul', 'Leste', 'Oeste'] as Regiao[]).map((r) => (
+                  <SelectItem key={r} value={r}>
+                    {r} - {REGIOES_CONFIG[r].nome}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
 
