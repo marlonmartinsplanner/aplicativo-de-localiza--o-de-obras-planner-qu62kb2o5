@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect, useRef } from 'react'
 import { Navbar } from '@/components/Navbar'
-import { listarObras, atribuirEngenheiro, zerarTodasAtribuicoes } from '@/services/obras'
+import { listarObras, atribuirEngenheiro } from '@/services/obras'
 import { listarEngenheiros } from '@/services/engenheiros'
 import type { Obra, Engenheiro, Regiao, SituacaoObra } from '@/types'
 import { REGIOES_CONFIG, SITUACOES_CONFIG } from '@/types'
@@ -15,16 +15,6 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Badge } from '@/components/ui/badge'
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from '@/components/ui/alert-dialog'
 import {
   Layers,
   Search,
@@ -80,10 +70,6 @@ export default function Mapa() {
   // Painel lateral visível em telas mobile/toggle
   const [mostrarListaLateral, setMostrarListaLateral] = useState(true)
 
-  // Zerar atribuições (mesmo fluxo da tela Engenheiros)
-  const [alertaZerarAberto, setAlertaZerarAberto] = useState(false)
-  const [processandoAcao, setProcessandoAcao] = useState(false)
-
   const mapaRef = useRef<HTMLDivElement>(null)
   const leafletMapRef = useRef<any>(null)
   const markersLayerRef = useRef<any>(null)
@@ -110,45 +96,6 @@ export default function Mapa() {
   useEffect(() => {
     carregarDados()
   }, [])
-
-  const handleZerarAtribuicoes = async () => {
-    setProcessandoAcao(true)
-    try {
-      const alteradas = await zerarTodasAtribuicoes(usuario?.name || 'Marlon Martins', usuario?.id)
-      setObras((prev) =>
-        prev.map((o) => ({ ...o, engenheiro: undefined, atribuido_em: undefined })),
-      )
-      setObraSelecionada((prev) =>
-        prev ? { ...prev, engenheiro: undefined, atribuido_em: undefined } : null,
-      )
-      setClusterSelecionado((prev) =>
-        prev
-          ? {
-              ...prev,
-              obras: prev.obras.map((o) => ({
-                ...o,
-                engenheiro: undefined,
-                atribuido_em: undefined,
-              })),
-            }
-          : null,
-      )
-      setAlertaZerarAberto(false)
-      toast({
-        title: 'Atribuições Zeradas',
-        description: `Todas as atribuições foram removidas (${alteradas} obras liberadas).`,
-      })
-    } catch (e) {
-      console.error(e)
-      toast({
-        variant: 'destructive',
-        title: 'Erro ao zerar',
-        description: 'Não foi possível zerar as atribuições.',
-      })
-    } finally {
-      setProcessandoAcao(false)
-    }
-  }
 
   // Lista de municípios únicos para o filtro
   const municipiosUnicos = useMemo(() => {
@@ -832,48 +779,9 @@ export default function Mapa() {
                 </div>
               )}
             </div>
-            {/* Rodapé da lista: ação de zerar atribuições */}
-            <div className="p-3 border-t border-slate-200 dark:border-slate-800 flex justify-end">
-              <Button
-                onClick={() => setAlertaZerarAberto(true)}
-                variant="outline"
-                size="sm"
-                className="text-xs text-planner-red hover:text-planner-red-dark hover:bg-planner-red/10 dark:hover:bg-planner-red/20 border-planner-red/30 dark:border-planner-red/40 gap-1.5"
-              >
-                <RotateCcw className="w-3.5 h-3.5" />
-                Zerar Atribuições
-              </Button>
-            </div>
           </aside>
         )}
       </div>
-
-      {/* Alerta de Confirmação: Zerar Atribuições */}
-      <AlertDialog open={alertaZerarAberto} onOpenChange={setAlertaZerarAberto}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle className="flex items-center gap-2 text-planner-red">
-              <AlertTriangle className="w-5 h-5 text-planner-red" />
-              Zerar Todas as Atribuições de Obras?
-            </AlertDialogTitle>
-            <AlertDialogDescription className="text-xs text-slate-600 dark:text-slate-400">
-              Esta ação removerá o engenheiro responsável de <strong>todas as obras</strong> do
-              sistema de uma só vez. As obras ficarão desvinculadas e o histórico registrará a
-              operação de zeramento.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel disabled={processandoAcao}>Cancelar</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={handleZerarAtribuicoes}
-              disabled={processandoAcao}
-              className="bg-planner-red hover:bg-planner-red-dark text-white"
-            >
-              {processandoAcao ? 'Zerando...' : 'Confirmar e Zerar'}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
 
       {/* Modal de Edição de Obra */}
       <ModalEdicaoObra

@@ -125,18 +125,6 @@
   --planner-red: #c8102e;
 }
 
-/* A logo precisa existir na impressão do resumo da reunião */
-@media print {
-  img.print-logo {
-    display: block !important;
-    visibility: visible !important;
-    max-height: 3.5rem;
-    width: auto;
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
-  }
-}
-
 @layer utilities {
   /* KEEP ALL THE ANIMATIONS CLASSES THAT ARE USED BELOW */
   @keyframes accordion-down {

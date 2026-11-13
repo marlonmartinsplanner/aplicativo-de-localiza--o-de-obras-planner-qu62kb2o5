@@ -1,7 +1,6 @@
 import { useState, useEffect, useMemo } from 'react'
 import { Navbar } from '@/components/Navbar'
-import { listarObras, atribuirEngenheiro, excluirTodasObras } from '@/services/obras'
-import { ExcluirTodasObrasDialog } from '@/components/ExcluirTodasObrasDialog'
+import { listarObras, sugerirProximoCodigo } from '@/services/obras'
 import { listarEngenheiros } from '@/services/engenheiros'
 import type { Obra, Engenheiro, Regiao, SituacaoObra } from '@/types'
 import { REGIOES_CONFIG, SITUACOES_CONFIG } from '@/types'
@@ -35,14 +34,9 @@ import {
   Pencil,
   HardHat,
   MapPin,
-  CheckCircle2,
-  Clock,
-  Printer,
-  Copy,
-  DollarSign,
-  Trash2,
+  PlusCircle,
 } from 'lucide-react'
-import { useAuth } from '@/contexts/AuthContext'
+import { ModalNovaObra } from '@/components/ModalNovaObra'
 import { useToast } from '@/hooks/use-toast'
 
 type CampoOrdenacao =
@@ -57,7 +51,6 @@ type CampoOrdenacao =
 type DirecaoOrdenacao = 'asc' | 'desc'
 
 export default function Obras() {
-  const { usuario } = useAuth()
   const { toast } = useToast()
 
   const [obras, setObras] = useState<Obra[]>([])
@@ -78,9 +71,8 @@ export default function Obras() {
   const [obraParaEditar, setObraParaEditar] = useState<Obra | null>(null)
   const [modalEdicaoAberto, setModalEdicaoAberto] = useState(false)
 
-  // Exclusão de todas as obras
-  const [dialogExclusaoAberto, setDialogExclusaoAberto] = useState(false)
-  const [excluindoTodas, setExcluindoTodas] = useState(false)
+  // Criação de nova obra
+  const [modalNovaAberto, setModalNovaAberto] = useState(false)
 
   const carregar = async () => {
     try {
@@ -103,32 +95,6 @@ export default function Obras() {
   useEffect(() => {
     carregar()
   }, [])
-
-  const handleExcluirTodas = async () => {
-    setExcluindoTodas(true)
-    try {
-      const quantidade = await excluirTodasObras()
-      setObras([])
-      setObraParaEditar(null)
-      setModalEdicaoAberto(false)
-      setDialogExclusaoAberto(false)
-      toast({
-        title: 'Obras excluídas',
-        description: `${quantidade} obras, atribuições e histórico foram apagados do banco.`,
-      })
-    } catch (e) {
-      console.error('Erro ao excluir obras:', e)
-      // Recarrega para refletir o estado real caso a exclusão tenha sido parcial
-      await carregar()
-      toast({
-        variant: 'destructive',
-        title: 'Erro ao excluir',
-        description: 'Não foi possível concluir a exclusão. A lista foi recarregada.',
-      })
-    } finally {
-      setExcluindoTodas(false)
-    }
-  }
 
   const alternarOrdenacao = (campo: CampoOrdenacao) => {
     if (campoOrdenacao === campo) {
@@ -288,12 +254,11 @@ export default function Obras() {
               Exportar CSV
             </Button>
             <Button
-              onClick={() => setDialogExclusaoAberto(true)}
-              disabled={obras.length === 0 || carregando}
-              className="bg-planner-red hover:bg-planner-red-dark text-white gap-2 text-xs font-semibold shadow-xs"
+              onClick={() => setModalNovaAberto(true)}
+              className="bg-planner-blue hover:bg-planner-blue-dark text-white gap-2 text-xs font-semibold shadow-xs"
             >
-              <Trash2 className="w-4 h-4" />
-              Excluir todas as obras
+              <PlusCircle className="w-4 h-4" />
+              Adicionar Obra
             </Button>
           </div>
         </div>
@@ -651,13 +616,15 @@ export default function Obras() {
         </div>
       </main>
 
-      {/* Confirmação: Excluir todas as obras */}
-      <ExcluirTodasObrasDialog
-        aberto={dialogExclusaoAberto}
-        aoFechar={() => setDialogExclusaoAberto(false)}
-        totalObras={totalObras}
-        processando={excluindoTodas}
-        aoConfirmar={handleExcluirTodas}
+      {/* Modal: Adicionar Obra */}
+      <ModalNovaObra
+        aberto={modalNovaAberto}
+        codigoSugerido={sugerirProximoCodigo(obras)}
+        codigosExistentes={obras.map((o) => o.codigo)}
+        aoFechar={() => setModalNovaAberto(false)}
+        aoSalvar={(novaObra) => {
+          setObras((prev) => [...prev, novaObra].sort((a, b) => a.codigo.localeCompare(b.codigo)))
+        }}
       />
 
       {/* Modal de Edição */}

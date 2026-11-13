@@ -1,5 +1,5 @@
 import pb from '@/lib/pocketbase/client'
-import type { Obra, Engenheiro, HistoricoAtribuicao } from '@/types'
+import type { Obra, Engenheiro, HistoricoAtribuicao, Regiao, SituacaoObra } from '@/types'
 
 export async function listarObras(filtro?: string): Promise<Obra[]> {
   const records = await pb.collection('obras').getFullList<Obra>({
@@ -14,6 +14,36 @@ export async function buscarObraPorId(id: string): Promise<Obra> {
   return await pb.collection('obras').getOne<Obra>(id, {
     expand: 'engenheiro',
   })
+}
+
+export async function criarObra(dados: {
+  codigo: string
+  nome: string
+  municipio: string
+  regiao: Regiao
+  situacao: SituacaoObra
+  avanco: number
+  custo: number
+  latitude: number
+  longitude: number
+}): Promise<Obra> {
+  const created = await pb.collection('obras').create<Obra>(dados, {
+    expand: 'engenheiro',
+  })
+  return created
+}
+
+/**
+ * Sugere o próximo código na sequência OBR-0XX, ignorando códigos fora do padrão
+ * e buracos na numeração (sempre avança para o maior existente + 1).
+ */
+export function sugerirProximoCodigo(obras: Obra[]): string {
+  const maior = obras.reduce((max, o) => {
+    const m = /^OBR-(\d+)$/i.exec(o.codigo?.trim() || '')
+    if (!m) return max
+    return Math.max(max, parseInt(m[1], 10))
+  }, 0)
+  return `OBR-${String(maior + 1).padStart(3, '0')}`
 }
 
 export async function atualizarObra(
@@ -93,23 +123,8 @@ export async function atribuirEngenheiro(
 }
 
 /**
- * Exclui TODAS as obras e o histórico de atribuições (dependente das obras).
- * Engenheiros e usuários não são tocados. Retorna a quantidade de obras apagadas.
+ * Remove o engenheiro de TODAS as obras registradas no histórico.
  */
-export async function excluirTodasObras(): Promise<number> {
-  const historicos = await pb.collection('historico_atribuicoes').getFullList<HistoricoAtribuicao>()
-  for (const h of historicos) {
-    await pb.collection('historico_atribuicoes').delete(h.id)
-  }
-
-  const obras = await pb.collection('obras').getFullList<Obra>()
-  for (const o of obras) {
-    await pb.collection('obras').delete(o.id)
-  }
-
-  return obras.length
-}
-
 export async function zerarTodasAtribuicoes(
   usuarioNome: string,
   usuarioId?: string,

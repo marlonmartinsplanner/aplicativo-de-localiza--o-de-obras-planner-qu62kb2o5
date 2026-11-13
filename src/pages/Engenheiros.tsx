@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react'
 import { Navbar } from '@/components/Navbar'
-import { listarObras, zerarTodasAtribuicoes, atribuirEngenheiro } from '@/services/obras'
+import { listarObras } from '@/services/obras'
 import { listarEngenheiros, criarEngenheiro, removerEngenheiro } from '@/services/engenheiros'
 import { listarHistoricoAtribuicoes } from '@/services/historico'
 import type { Obra, Engenheiro, HistoricoAtribuicao } from '@/types'
@@ -27,29 +27,10 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
-import {
-  Users,
-  HardHat,
-  UserPlus,
-  Trash2,
-  RotateCcw,
-  Copy,
-  Printer,
-  CheckCircle2,
-  DollarSign,
-  Building2,
-  History,
-  AlertTriangle,
-  Mail,
-  Phone,
-  Briefcase,
-} from 'lucide-react'
-import { useAuth } from '@/contexts/AuthContext'
+import { Users, HardHat, UserPlus, Trash2, History, AlertTriangle, Briefcase } from 'lucide-react'
 import { useToast } from '@/hooks/use-toast'
-import logoPlanner from '@/assets/construtora-planner-engenharia-60ea4.png'
 
 export default function Engenheiros() {
-  const { usuario } = useAuth()
   const { toast } = useToast()
 
   const [engenheiros, setEngenheiros] = useState<Engenheiro[]>([])
@@ -65,7 +46,6 @@ export default function Engenheiros() {
   const [salvandoEng, setSalvandoEng] = useState(false)
 
   // Confirmações
-  const [alertaZerarAberto, setAlertaZerarAberto] = useState(false)
   const [engParaRemover, setEngParaRemover] = useState<Engenheiro | null>(null)
   const [processandoAcao, setProcessandoAcao] = useState(false)
 
@@ -195,94 +175,6 @@ export default function Engenheiros() {
     }
   }
 
-  const handleZerarAtribuicoes = async () => {
-    setProcessandoAcao(true)
-    try {
-      const alteradas = await zerarTodasAtribuicoes(usuario?.name || 'Marlon Martins', usuario?.id)
-      setObras((prev) =>
-        prev.map((o) => ({ ...o, engenheiro: undefined, atribuido_em: undefined })),
-      )
-      setAlertaZerarAberto(false)
-
-      // Atualiza histórico
-      const novoHist = await listarHistoricoAtribuicoes(20)
-      setHistorico(novoHist)
-
-      toast({
-        title: 'Atribuições Zeradas',
-        description: `Todas as atribuições foram removidas (${alteradas} obras liberadas).`,
-      })
-    } catch (e) {
-      console.error(e)
-      toast({
-        variant: 'destructive',
-        title: 'Erro ao zerar',
-        description: 'Não foi possível zerar as atribuições.',
-      })
-    } finally {
-      setProcessandoAcao(false)
-    }
-  }
-
-  // Gerar texto do Resumo para Reunião
-  const gerarTextoResumo = () => {
-    const dataHora = new Date().toLocaleDateString('pt-BR', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    })
-
-    let texto = `PLANNER ENGENHARIA - RESUMO DE DISTRIBUIÇÃO DAS OBRAS\r\n`
-    texto += `Gerado em: ${dataHora} por ${usuario?.name || 'Marlon Martins'}\r\n`
-    texto += `------------------------------------------------------------\r\n\r\n`
-
-    texto += `CARGA POR ENGENHEIRO:\r\n`
-    painelCarga.forEach((eng) => {
-      const custoFmt = new Intl.NumberFormat('pt-BR', {
-        style: 'currency',
-        currency: 'BRL',
-      }).format(eng.custoTotal)
-      texto += `• ${eng.nome}: ${eng.qtdObras} obras | Custo Somado: ${custoFmt} | Avanço Médio: ${eng.avancoMedio}%\r\n`
-      texto += `  (R1: ${eng.distribuicao.r1} | R2: ${eng.distribuicao.r2} | R3: ${eng.distribuicao.r3} | R4: ${eng.distribuicao.r4})\r\n`
-      eng.obras.forEach((o) => {
-        texto += `    - [${o.codigo}] ${o.nome} (${o.municipio} - ${o.regiao}) - ${o.situacao} (${o.avanco}%)\r\n`
-      })
-      texto += `\r\n`
-    })
-
-    if (obrasSemEngenheiro.length > 0) {
-      const custoPendFmt = new Intl.NumberFormat('pt-BR', {
-        style: 'currency',
-        currency: 'BRL',
-      }).format(custoTotalSemEngenheiro)
-      texto += `OBRAS PENDENTES DE ENGENHEIRO (${obrasSemEngenheiro.length} obras - ${custoPendFmt}):\r\n`
-      obrasSemEngenheiro.forEach((o) => {
-        texto += `• [${o.codigo}] ${o.nome} (${o.municipio} - ${o.regiao}) - ${o.situacao}\r\n`
-      })
-      texto += `\r\n`
-    }
-
-    texto += `------------------------------------------------------------\r\n`
-    texto += `TOTAL: ${obras.length} obras cadastradas | ${obras.length - obrasSemEngenheiro.length} atribuídas\r\n`
-
-    return texto
-  }
-
-  const copiarResumo = () => {
-    const texto = gerarTextoResumo()
-    navigator.clipboard.writeText(texto)
-    toast({
-      title: 'Resumo Copiado',
-      description: 'O texto do resumo para a reunião foi copiado para a área de transferência.',
-    })
-  }
-
-  const imprimirResumo = () => {
-    window.print()
-  }
-
   const formatarMoeda = (val: number) => {
     return new Intl.NumberFormat('pt-BR', {
       style: 'currency',
@@ -317,31 +209,6 @@ export default function Engenheiros() {
           </div>
 
           <div className="flex flex-wrap items-center gap-2 print:hidden">
-            <Button onClick={copiarResumo} variant="outline" size="sm" className="text-xs gap-1.5">
-              <Copy className="w-3.5 h-3.5" />
-              Copiar Resumo
-            </Button>
-
-            <Button
-              onClick={imprimirResumo}
-              variant="outline"
-              size="sm"
-              className="text-xs gap-1.5"
-            >
-              <Printer className="w-3.5 h-3.5" />
-              Imprimir para Reunião
-            </Button>
-
-            <Button
-              onClick={() => setAlertaZerarAberto(true)}
-              variant="outline"
-              size="sm"
-              className="text-xs text-planner-red hover:text-planner-red-dark hover:bg-planner-red/10 dark:hover:bg-planner-red/20 border-planner-red/30 dark:border-planner-red/40 gap-1.5"
-            >
-              <RotateCcw className="w-3.5 h-3.5" />
-              Zerar Atribuições
-            </Button>
-
             <Button
               onClick={() => setModalNovoEngAberto(true)}
               size="sm"
@@ -351,22 +218,6 @@ export default function Engenheiros() {
               Novo Engenheiro
             </Button>
           </div>
-        </div>
-
-        {/* Resumo da Reunião (Visível apenas na impressão) */}
-        <div className="hidden print:block p-4 mb-4 bg-white border border-slate-300 rounded text-xs space-y-2">
-          <img
-            src={logoPlanner}
-            alt="Construtora Planner Engenharia"
-            className="print-logo h-12 w-auto mb-2"
-          />
-          <p className="font-bold text-sm">
-            PLANNER ENGENHARIA &bull; PAUTA DE DISTRIBUIÇÃO DE {obras.length} OBRAS
-          </p>
-          <p>
-            Data de emissão: {new Date().toLocaleDateString('pt-BR')} &bull; Responsável:{' '}
-            {usuario?.name || 'Marlon Martins'}
-          </p>
         </div>
 
         {/* Painel de Carga dos Engenheiros */}
@@ -670,33 +521,6 @@ export default function Engenheiros() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-
-      {/* Alerta de Confirmação: Zerar Atribuições */}
-      <AlertDialog open={alertaZerarAberto} onOpenChange={setAlertaZerarAberto}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle className="flex items-center gap-2 text-planner-red">
-              <AlertTriangle className="w-5 h-5 text-planner-red" />
-              Zerar Todas as Atribuições de Obras?
-            </AlertDialogTitle>
-            <AlertDialogDescription className="text-xs text-slate-600 dark:text-slate-400">
-              Esta ação removerá o engenheiro responsável de <strong>todas as obras</strong> do
-              sistema de uma só vez. As obras ficarão desvinculadas e o histórico registrará a
-              operação de zeramento.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel disabled={processandoAcao}>Cancelar</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={handleZerarAtribuicoes}
-              disabled={processandoAcao}
-              className="bg-planner-red hover:bg-planner-red-dark text-white"
-            >
-              {processandoAcao ? 'Zerando...' : 'Confirmar e Zerar'}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
 
       {/* Alerta de Confirmação: Remover Engenheiro */}
       <AlertDialog
