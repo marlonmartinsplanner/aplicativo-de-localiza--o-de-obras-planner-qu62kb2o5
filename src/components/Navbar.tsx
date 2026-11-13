@@ -102,7 +102,7 @@ export function Navbar({ totalObras, atribuidasCount }: NavbarProps) {
               Planner Engenharia
             </span>
             <span className="block text-[10px] uppercase tracking-wider text-planner-blue font-semibold">
-              Localização de Obras
+              Gestão de Obras
             </span>
           </div>
         </Link>
