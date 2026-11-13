@@ -25,7 +25,6 @@ import {
 } from '@/components/ui/table'
 import {
   Building2,
-  Download,
   Search,
   RotateCcw,
   ArrowUpDown,
@@ -152,71 +151,6 @@ export default function Obras() {
     direcaoOrdenacao,
   ])
 
-  const exportarCSV = () => {
-    try {
-      const headers = [
-        'Código',
-        'Nome da Obra',
-        'Município',
-        'Região',
-        'Situação',
-        'Avanço (%)',
-        'Custo Orçado (R$)',
-        'Latitude',
-        'Longitude',
-        'Engenheiro Responsável',
-        'Atribuído Em',
-        'Atribuído Por',
-      ]
-
-      const linhas = obrasProcessadas.map((o) => {
-        const engNome = engenheiros.find((e) => e.id === o.engenheiro)?.nome || 'Não atribuído'
-        const dataAtrib = o.atribuido_em ? new Date(o.atribuido_em).toLocaleDateString('pt-BR') : ''
-
-        return [
-          `"${o.codigo}"`,
-          `"${o.nome.replace(/"/g, '""')}"`,
-          `"${o.municipio}"`,
-          `"${o.regiao}"`,
-          `"${o.situacao}"`,
-          o.avanco,
-          o.custo,
-          o.latitude,
-          o.longitude,
-          `"${engNome}"`,
-          `"${dataAtrib}"`,
-          `"${o.atribuido_por_nome || ''}"`,
-        ].join(';')
-      })
-
-      // BOM para Excel reconhecer acentos UTF-8
-      const conteudoCsv = '\uFEFF' + [headers.join(';'), ...linhas].join('\r\n')
-      const blob = new Blob([conteudoCsv], { type: 'text/csv;charset=utf-8;' })
-      const url = URL.createObjectURL(blob)
-      const link = document.createElement('a')
-      link.setAttribute('href', url)
-      link.setAttribute(
-        'download',
-        `planner_engenharia_obras_${new Date().toISOString().substring(0, 10)}.csv`,
-      )
-      document.body.appendChild(link)
-      link.click()
-      document.body.removeChild(link)
-
-      toast({
-        title: 'Exportação Concluída',
-        description: `${obrasProcessadas.length} obras exportadas com sucesso em formato CSV.`,
-      })
-    } catch (err) {
-      console.error('Erro ao exportar CSV:', err)
-      toast({
-        variant: 'destructive',
-        title: 'Falha na exportação',
-        description: 'Não foi possível gerar o arquivo CSV.',
-      })
-    }
-  }
-
   const limparFiltros = () => {
     setBusca('')
     setFiltroRegiao('todas')
@@ -240,19 +174,11 @@ export default function Obras() {
               Tabela de Obras ({totalObras})
             </h1>
             <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
-              Listagem cadastral completa com busca, ordenação de colunas, edição direta no banco e
-              exportação em CSV
+              Listagem cadastral completa com busca, ordenação de colunas e edição direta no banco
             </p>
           </div>
 
           <div className="flex items-center gap-2">
-            <Button
-              onClick={exportarCSV}
-              className="bg-emerald-600 hover:bg-emerald-500 text-white gap-2 text-xs font-semibold shadow-xs"
-            >
-              <Download className="w-4 h-4" />
-              Exportar CSV
-            </Button>
             <Button
               onClick={() => setModalNovaAberto(true)}
               className="bg-planner-blue hover:bg-planner-blue-dark text-white gap-2 text-xs font-semibold shadow-xs"
