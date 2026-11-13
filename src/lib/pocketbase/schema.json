@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-13T00:51:40.438Z",
+  "generatedAt": "2026-11-13T01:28:24.768Z",
   "collections": [
     {
       "name": "users",
@@ -130,7 +130,7 @@
           "type": "select",
           "required": true,
           "system": false,
-          "selectValues": ["R1", "R2", "R3", "R4"]
+          "selectValues": ["Norte", "Sul", "Leste", "Oeste"]
         },
         {
           "name": "situacao",

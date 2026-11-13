@@ -1,4 +1,4 @@
-export type Regiao = 'R1' | 'R2' | 'R3' | 'R4'
+export type Regiao = 'Norte' | 'Sul' | 'Leste' | 'Oeste'
 
 export type SituacaoObra = 'Em andamento' | 'Paralisada' | 'Planejada' | 'Concluída'
 
@@ -55,6 +55,8 @@ export interface Usuario {
   avatar?: string
 }
 
+// 4 cores da paleta Planner redistribuídas para as 4 novas regiões
+// (Norte/Sul/Leste/Oeste — quadrantes em torno da Sede, ver src/utils/regioes.ts)
 export const REGIOES_CONFIG: Record<
   Regiao,
   {
@@ -66,16 +68,16 @@ export const REGIOES_CONFIG: Record<
     textClass: string
   }
 > = {
-  R1: {
-    nome: 'Região 1 - Metropolitana / Capital',
+  Norte: {
+    nome: 'Norte da Sede',
     cor: 'Azul Planner',
     hex: '#2563eb', // blue-600
     bgClass: 'bg-blue-500/15 text-blue-700 dark:text-blue-300 border-blue-300 dark:border-blue-700',
     borderClass: 'border-blue-500',
     textClass: 'text-blue-600 dark:text-blue-400',
   },
-  R2: {
-    nome: 'Região 2 - Campinas e Centro',
+  Sul: {
+    nome: 'Sul da Sede',
     cor: 'Verde Esmeralda',
     hex: '#059669', // emerald-600
     bgClass:
@@ -83,8 +85,8 @@ export const REGIOES_CONFIG: Record<
     borderClass: 'border-emerald-500',
     textClass: 'text-emerald-600 dark:text-emerald-400',
   },
-  R3: {
-    nome: 'Região 3 - Vale do Paraíba e Litoral',
+  Leste: {
+    nome: 'Leste da Sede',
     cor: 'Laranja Âmbar',
     hex: '#d97706', // amber-600
     bgClass:
@@ -92,8 +94,8 @@ export const REGIOES_CONFIG: Record<
     borderClass: 'border-amber-500',
     textClass: 'text-amber-600 dark:text-amber-400',
   },
-  R4: {
-    nome: 'Região 4 - Ribeirão Preto e Noroeste',
+  Oeste: {
+    nome: 'Oeste da Sede',
     cor: 'Púrpura Violeta',
     hex: '#7c3aed', // violet-600
     bgClass:
